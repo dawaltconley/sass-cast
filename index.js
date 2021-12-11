@@ -20,6 +20,8 @@ const quotedString = (str, q) => {
     return new sass.types.String(quoted);
 };
 
+const unquotedString = str => isQuoted(str) ? str.slice(1, -1) : str;
+
 // cribbed from davidkpiano/sassport
 const parseString = obj => {
     let result;
@@ -41,7 +43,7 @@ const parseString = obj => {
     return result;
 };
 
-const castToSass = (obj, opt={}) => {
+const toSass = (obj, opt={}) => {
     let {
         parseUnquotedStrings = false,
         quotes = "'",
@@ -70,7 +72,7 @@ const castToSass = (obj, opt={}) => {
         if (Array.isArray(obj)) {
             let sassList = new sass.types.List(obj.length);
             obj.forEach((item, i) => {
-                sassList.setValue(i, castToSass(item, opt));
+                sassList.setValue(i, toSass(item, opt));
             });
             return sassList;
         } else {
@@ -78,13 +80,63 @@ const castToSass = (obj, opt={}) => {
             let sassMap = new sass.types.Map(newObj.length);
             newObj.forEach(([ key, value ], i) => {
                 sassMap.setKey(i, quotedString(key, q)); // can produce invalid Scss if unquoted
-                sassMap.setValue(i, castToSass(value, opt));
+                sassMap.setValue(i, toSass(value, opt));
             });
             return sassMap;
         }
     } else if (typeof obj === 'function') {
-        return castToSass(obj(), opt);
+        return toSass(obj(), opt);
     }
 };
 
-module.exports = castToSass;
+const fromSass = (obj, opt={}) => {
+    let {
+        preserveUnits = false,
+        rgbColors = false
+    } = opt;
+    if (obj instanceof sass.types.Null) {
+        return null;
+    } else if (obj instanceof sass.types.Boolean) {
+        return obj.value;
+    } else if (obj instanceof sass.types.Number) {
+        if (preserveUnits) {
+            return [ obj.getValue(), obj.getUnit() ];
+        }
+        return obj.getValue();
+    } else if (obj instanceof sass.types.Color) {
+        if (rgbColors) {
+            return {
+                r: obj.getR(),
+                g: obj.getG(),
+                b: obj.getB(),
+                a: obj.getA()
+            };
+        }
+        return obj.toString();
+    } else if (obj instanceof sass.types.String) {
+        return unquotedString(obj.toString());
+    } else if (obj instanceof sass.types.List) {
+        let list = [];
+        for (let i = 0; i < obj.getLength(); i++) {
+            let value = obj.getValue(i);
+            value = fromSass(value);
+            list.push(value);
+        }
+        return list;
+    } else if (obj instanceof sass.types.Map) {
+        let map = {};
+        for (let i = 0; i < obj.getLength(); i++) {
+            let key = obj.getKey(i), value = obj.getValue(i);
+            key = unquotedString(key.toString());
+            map[key] = fromSass(value);
+        }
+        return map;
+    } else {
+        return obj;
+    }
+};
+
+module.exports = {
+    toSass,
+    fromSass
+};
