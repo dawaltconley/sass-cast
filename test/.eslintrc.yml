@@ -11,4 +11,4 @@ globals:
 parserOptions:
   ecmaVersion: 2018
 rules:
-  semi: off
+  semi: [ warn, never ]
