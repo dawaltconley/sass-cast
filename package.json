@@ -1,0 +1,24 @@
+{
+  "name": "cast-to-sass",
+  "version": "0.1.0",
+  "description": "Convert Javascript objects to Sass",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx mocha"
+  },
+  "keywords": [
+    "sass",
+    "scss",
+    "JSON",
+    "javascript",
+    "convert",
+    "compile"
+  ],
+  "author": "Dylan Awalt-Conley",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.4.1",
+    "mocha": "^9.1.3",
+    "sass": "^1.43.4"
+  }
+}
