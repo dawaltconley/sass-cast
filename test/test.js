@@ -12,13 +12,13 @@ describe('output', () => {
         assert.deepEqual(output(false), sass.FALSE)
     })
     it('should convert numbers', () => {
-        let expect = n => new types.Number(n);
+        let expect = n => new types.Number(n)
         assert.deepEqual(output(140), expect(140))
         assert.deepEqual(output(140.0), expect(140))
         assert.deepEqual(output(1.40), expect(1.4))
     })
     it('should convert strings to quoted strings', () => {
-        let expect = s => new types.String(s);
+        let expect = s => new types.String(s)
         assert.deepEqual(output('foo'), expect("'foo'"))
         assert.deepEqual(output('foo bar baz'), expect("'foo bar baz'"))
         assert.deepEqual(output("'quoted string'"), expect("'quoted string'"))
@@ -37,7 +37,7 @@ describe('output', () => {
             "('0': 'first', '1': 'last')")
         assert.equal(
             output({ 'single': "item" }).toString(),
-            "('single': 'item')");
+            "('single': 'item')")
     })
     it('should recursively convert arrays of arrays', () => {
         assert.equal(
@@ -61,7 +61,7 @@ describe('output', () => {
     })
 
     describe('{ parseUnquotedStrings: true }', () => {
-        let opt = { parseUnquotedStrings: true };
+        let opt = { parseUnquotedStrings: true }
         it('should convert rgb strings to colors', () => {
             let expect = (...args) => new types.Color(...args)
             assert.deepEqual(
@@ -75,7 +75,7 @@ describe('output', () => {
                 expect(0xffe77acc).toString())
         })
         it('should convert number strings to numbers with units', () => {
-            let expect = (...args) => new types.Number(...args);
+            let expect = (...args) => new types.Number(...args)
             assert.deepEqual(
                 output('140px', opt),
                 expect(140, 'px'))
