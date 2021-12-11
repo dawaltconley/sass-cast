@@ -26,6 +26,13 @@ describe('toSass', () => {
         assert.deepEqual(toSass("'quoted string'"), string("'quoted string'"))
         assert.deepEqual(toSass('"quoted string"'), string('"quoted string"'))
     })
+    it('should include toString method on output values', () => {
+        assert.equal(toSass(undefined).toString(), 'null')
+        assert.equal(toSass(true).toString(), 'true')
+        assert.equal(toSass(false).toString(), 'false')
+        assert.equal(toSass(1.40).toString(), '1.4')
+        assert.equal(toSass('"quoted string"').toString(), '"quoted string"')
+    })
     it('should convert arrays to lists', () => {
         assert.equal(toSass([ 'foo', 4, false ]).toString(), "'foo', 4, false")
         assert.equal(toSass([ 'single item' ]).toString(), "('single item',)")
@@ -79,8 +86,8 @@ describe('toSass', () => {
                 toSass('140px', opt),
                 number(140, 'px'))
             assert.deepEqual(
-                toSass('0.45%', opt),
-                number(0.45, '%'))
+                toSass('0.45%', opt).toString(),
+                number(0.45, '%').toString())
         })
     })
 })
