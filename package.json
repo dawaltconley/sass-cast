@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "description": "Convert Javascript objects to Sass objects and vice versa.",
   "main": "index.js",
-  "files": [ "utils.js" ],
+  "files": [
+    "utils.js",
+    "legacy.js"
+  ],
   "scripts": {
     "test": "npx mocha",
     "document": "npx documentation readme index.js --shallow --section Usage",

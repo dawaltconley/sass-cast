@@ -21,8 +21,7 @@ const quoteString = (str, q) => {
         str = str.slice(1, -1);
     }
     let r = new RegExp(q, 'g');
-    let quoted = q + str.replace(r, '\\'+q) + q;
-    return new sass.types.String(quoted);
+    return q + str.replace(r, '\\'+q) + q;
 };
 
 /**
@@ -39,9 +38,36 @@ const unquoteString = str => isQuoted(str) ? str.slice(1, -1) : str;
  *
  * @private
  * @param {string} str
- * @return {LegacyObject}
+ * @return {Value}
  */
 const parseString = str => {
+    let result;
+
+    try {  
+        sass.compileString(`$_: ___(${str});`, {
+            functions: {
+                '___($value)': (args) => {
+                    result = args[0];
+                    return result;
+                }
+            }
+        });
+    } catch(e) {
+        return str;
+    }
+
+    return result;
+};
+
+/**
+ * Parse a string as a legacy Sass object
+ * cribbed from davidkpiano/sassport
+ *
+ * @private
+ * @param {string} str
+ * @return {LegacyObject}
+ */
+const parseStringLegacy = str => {
     let result;
 
     try {  
@@ -61,9 +87,20 @@ const parseString = str => {
     return result;
 };
 
+/**
+ * Function to handle 'toString()' methods with legacy API.
+ *
+ * @private
+ * @param {LegacyObject} obj
+ * @return {string}
+ */
+const legacyToString = obj => (obj.dartValue || obj).toString();
+
 module.exports = {
     isQuoted,
     quoteString,
     unquoteString,
-    parseString
+    parseString,
+    parseStringLegacy,
+    legacyToString
 };

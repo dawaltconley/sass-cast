@@ -1,10 +1,9 @@
-const { isQuoted, quoteString, unquoteString, parseString } = require('./utils.js');
+const { isQuoted, unquoteString, parseString } = require('./utils.js');
+const { OrderedMap } = require('immutable');
 const sass = require('sass');
 
 /**
- * Converts any Javascript object to an equivalent Sass object.
- * The return value will be an object from the [legacy function API](https://sass-lang.com/documentation/js-api/modules/types),
- * which can be stored as a string using the `toString()` method.
+ * Converts any Javascript object to an equivalent Sass value.
  *
  * ```javascript
  * const { toSass } = require('sass-cast');
@@ -26,24 +25,21 @@ const sass = require('sass');
  * @param {*} value - the value to be converted
  * @param {Object} options
  * @param {boolean} [options.parseUnquotedStrings=false] - whether to parse unquoted strings for colors or numbers with units
- * @param {string} [options.quotes="'"] - the type of quotes to use when quoting Sass strings (single or double)
- * @return {LegacyObject} - a {@link https://sass-lang.com/documentation/js-api/modules#LegacyValue legacy Sass object}
+ * @return {Value} - a {@link https://sass-lang.com/documentation/js-api/classes/Value Sass value} 
  */
 
 const toSass = (value, options={}) => {
     let {
         parseUnquotedStrings = false,
-        quotes = "'",
     } = options;
-    const q = quotes == '"' ? '"' : "'";
-    if (value === null || value === undefined) {
-        return sass.types.Null.NULL;
+    if (value instanceof sass.Value) {
+        return value;
+    } else if (value === null || value === undefined) {
+        return sass.sassNull;
     } else if (typeof value === 'boolean') {
-        return value
-            ? sass.types.Boolean.TRUE
-            : sass.types.Boolean.FALSE;
+        return value ? sass.sassTrue : sass.sassFalse;
     } else if (typeof value === 'number') {
-        return new sass.types.Number(value);
+        return new sass.SassNumber(value);
     } else if (typeof value === 'string') {
         // Valid JS strings can produce invalid Scss if unquoted,
         // so we want to wrap all strings in quotes,
@@ -51,25 +47,20 @@ const toSass = (value, options={}) => {
         // Parsing these is expensive, so it must be enabled by an argument.
         if (parseUnquotedStrings && !isQuoted(value)) {
             let parsed = parseString(value);
-            if (parsed instanceof sass.types.Color || parsed instanceof sass.types.Number)
+            if (parsed instanceof sass.SassColor || parsed instanceof sass.SassNumber)
                 return parsed;
         }
-        return quoteString(value, q);
+        return new sass.SassString(value);
     } else if (typeof value === 'object') {
         if (Array.isArray(value)) {
-            let sassList = new sass.types.List(value.length);
-            value.forEach((item, i) => {
-                sassList.setValue(i, toSass(item, options));
-            });
-            return sassList;
+            let sassList = value.map(value => toSass(value, options));
+            return new sass.SassList(sassList);
         } else {
-            let newObj = Object.entries(value);
-            let sassMap = new sass.types.Map(newObj.length);
-            newObj.forEach(([ key, value ], i) => {
-                sassMap.setKey(i, quoteString(key, q)); // can produce invalid Scss if unquoted
-                sassMap.setValue(i, toSass(value, options));
-            });
-            return sassMap;
+            let sassMap = OrderedMap(value).mapEntries(([ key, value ]) => [
+                new sass.SassString(key),
+                toSass(value, options)
+            ]);
+            return new sass.SassMap(sassMap);
         }
     } else if (typeof value === 'function') {
         return toSass(value(), options);
@@ -77,7 +68,7 @@ const toSass = (value, options={}) => {
 };
 
 /**
- * Converts legacy Sass objects to their Javascript equivalents.
+ * Converts Sass values to their Javascript equivalents.
  *
  * ```javascript
  * const { fromSass, toSass } = require('sass-cast');
@@ -87,61 +78,50 @@ const toSass = (value, options={}) => {
  * // 'a sass string object'
  * ```
  *
- * @param {LegacyObject} object - a {@link https://sass-lang.com/documentation/js-api/modules#LegacyValue legacy Sass object}
+ * @param {Value} object - a {@link https://sass-lang.com/documentation/js-api/classes/Value Sass value}
  * @param {Object} options
  * @param {boolean} [options.preserveUnits=false] - By default, only the values of numbers are returned, not their units. If true, `fromSass` will return numbers as a two-item Array, i.e. [ value, unit ]
  * @param {boolean} [options.rgbColors=false] - By default, colors are returned as strings. If true, `fromSass` will return colors as an object with `r`, `g`, `b`, and `a`, properties.
  * @return {*} - a Javascript value corresponding to the Sass input
  */
 
+const colorProperties = [ 'red', 'green', 'blue', 'hue', 'lightness', 'saturation', 'whiteness', 'blackness', 'alpha' ];
+
 const fromSass = (object, options={}) => {
     let {
         preserveUnits = false,
         rgbColors = false
     } = options;
-    if (object instanceof sass.types.Null) {
-        return null;
-    } else if (object instanceof sass.types.Boolean) {
+    if (object instanceof sass.SassBoolean) {
         return object.value;
-    } else if (object instanceof sass.types.Number) {
+    } else if (object instanceof sass.SassNumber) {
         if (preserveUnits) {
-            return [ object.getValue(), object.getUnit() ];
+            return [ object.value, object.numeratorUnits.toArray(), object.denominatorUnits.toArray() ];
         }
-        return object.getValue();
-    } else if (object instanceof sass.types.Color) {
+        return object.value;
+    } else if (object instanceof sass.SassColor) {
         if (rgbColors) {
-            return {
-                r: object.getR(),
-                g: object.getG(),
-                b: object.getB(),
-                a: object.getA()
-            };
+            return colorProperties.reduce((colorObj, p) => {
+                colorObj[p] = object[p];
+                return colorObj;
+            }, {});
         }
         return object.toString();
-    } else if (object instanceof sass.types.String) {
-        return unquoteString(object.getValue());
-    } else if (object instanceof sass.types.List) {
-        let list = [];
-        for (let i = 0; i < object.getLength(); i++) {
-            let value = object.getValue(i);
-            value = fromSass(value, options);
-            list.push(value);
-        }
-        return list;
-    } else if (object instanceof sass.types.Map) {
-        let map = {};
-        for (let i = 0; i < object.getLength(); i++) {
-            let key = object.getKey(i), value = object.getValue(i);
-            key = unquoteString(key.toString());
-            map[key] = fromSass(value, options);
-        }
-        return map;
+    } else if (object instanceof sass.SassString) {
+        return unquoteString(object.text);
+    } else if (object instanceof sass.SassList) {
+        return object.asList.map(v => fromSass(v, options)).toArray();
+    } else if (object instanceof sass.SassMap) {
+        return object.contents
+            .mapEntries(([k, v]) => [ k.text, fromSass(v, options) ])
+            .toObject();
     } else {
-        return object;
+        return object.realNull;
     }
 };
 
 module.exports = {
     toSass,
-    fromSass
+    fromSass,
+    legacy: require('./legacy.js')
 };
