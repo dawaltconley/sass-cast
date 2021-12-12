@@ -9,7 +9,7 @@ const sass = require('sass');
  * const { toSass } = require('sass-cast');
  * 
  * const string = toSass('a simple string');
- * // quoted SassString => "'a simple string'"
+ * // quoted SassString => '"a simple string"'
  * 
  * const map = toSass({
  *   key: 'value',
@@ -17,10 +17,10 @@ const sass = require('sass');
  *     'complex//:key': [ null, 4 ],
  *   }
  * });
- * // SassMap => "('key': 'value', 'nested': ('complex//:key': (null, 4)))"
+ * // SassMap => '("key": "value", "nested": ("complex//:key": (null, 4)))'
+ * ```
  *
  * This method is recursive and will convert the values of any array or object, as well as the array or object itself.
- * ```
  *
  * @param {*} value - the value to be converted
  * @param {Object} options
@@ -67,6 +67,8 @@ const toSass = (value, options={}) => {
     }
 };
 
+const colorProperties = [ 'red', 'green', 'blue', 'hue', 'lightness', 'saturation', 'whiteness', 'blackness', 'alpha' ];
+
 /**
  * Converts Sass values to their Javascript equivalents.
  *
@@ -84,8 +86,6 @@ const toSass = (value, options={}) => {
  * @param {boolean} [options.rgbColors=false] - By default, colors are returned as strings. If true, `fromSass` will return colors as an object with `r`, `g`, `b`, and `a`, properties.
  * @return {*} - a Javascript value corresponding to the Sass input
  */
-
-const colorProperties = [ 'red', 'green', 'blue', 'hue', 'lightness', 'saturation', 'whiteness', 'blackness', 'alpha' ];
 
 const fromSass = (object, options={}) => {
     let {

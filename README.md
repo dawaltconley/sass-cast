@@ -22,15 +22,13 @@ the conversion is handled by Sass itself.
 
 ### toSass
 
-Converts any Javascript object to an equivalent Sass object.
-The return value will be an object from the [legacy function API](https://sass-lang.com/documentation/js-api/modules/types),
-which can be stored as a string using the `toString()` method.
+Converts any Javascript object to an equivalent Sass value.
 
 ```javascript
 const { toSass } = require('sass-cast');
 
 const string = toSass('a simple string');
-// quoted SassString => "'a simple string'"
+// quoted SassString => '"a simple string"'
 
 const map = toSass({
   key: 'value',
@@ -38,10 +36,10 @@ const map = toSass({
     'complex//:key': [ null, 4 ],
   }
 });
-// SassMap => "('key': 'value', 'nested': ('complex//:key': (null, 4)))"
+// SassMap => '("key": "value", "nested": ("complex//:key": (null, 4)))'
+```
 
 This method is recursive and will convert the values of any array or object, as well as the array or object itself.
-```
 
 #### Parameters
 
@@ -49,13 +47,12 @@ This method is recursive and will convert the values of any array or object, as 
 *   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `{}`)
 
     *   `options.parseUnquotedStrings` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether to parse unquoted strings for colors or numbers with units (optional, default `false`)
-    *   `options.quotes` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the type of quotes to use when quoting Sass strings (single or double) (optional, default `"'"`)
 
-Returns **LegacyObject** a [legacy Sass object](https://sass-lang.com/documentation/js-api/modules#LegacyValue)
+Returns **Value** a [Sass value](https://sass-lang.com/documentation/js-api/classes/Value)
 
 ### fromSass
 
-Converts legacy Sass objects to their Javascript equivalents.
+Converts Sass values to their Javascript equivalents.
 
 ```javascript
 const { fromSass, toSass } = require('sass-cast');
@@ -67,7 +64,7 @@ const string = fromSass(sassString);
 
 #### Parameters
 
-*   `object` **LegacyObject** a [legacy Sass object](https://sass-lang.com/documentation/js-api/modules#LegacyValue)
+*   `object` **Value** a [Sass value](https://sass-lang.com/documentation/js-api/classes/Value)
 *   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `{}`)
 
     *   `options.preserveUnits` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, only the values of numbers are returned, not their units. If true, `fromSass` will return numbers as a two-item Array, i.e. \[ value, unit ] (optional, default `false`)
