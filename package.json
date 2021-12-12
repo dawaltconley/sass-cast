@@ -17,11 +17,19 @@
     "compile"
   ],
   "author": "Dylan Awalt-Conley",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "documentation": "^13.2.5",
     "eslint": "^8.4.1",
     "mocha": "^9.1.3",
     "sass": "^1.43.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dawaltconley/sass-cast.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dawaltconley/sass-cast/issues"
+  },
+  "homepage": "https://github.com/dawaltconley/sass-cast#readme"
 }
