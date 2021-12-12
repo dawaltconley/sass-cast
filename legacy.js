@@ -2,25 +2,15 @@ const { isQuoted, quoteString, unquoteString, parseStringLegacy, legacyToString 
 const sass = require('sass');
 
 /**
+ * @namespace legacy 
+ * @description A separate set of methods to interface with Sass's legacy Javascript API.
+ */
+
+/**
+ *
  * Converts any Javascript object to an equivalent legacy Sass object.
  *
- * ```javascript
- * const { toSass } = require('sass-cast');
- * 
- * const string = toSass('a simple string');
- * // quoted SassString => "'a simple string'"
- * 
- * const map = toSass({
- *   key: 'value',
- *   nested: {
- *     'complex//:key': [ null, 4 ],
- *   }
- * });
- * // SassMap => "('key': 'value', 'nested': ('complex//:key': (null, 4)))"
- *
- * This method is recursive and will convert the values of any array or object, as well as the array or object itself.
- * ```
- *
+ * @memberof legacy
  * @param {*} value - the value to be converted
  * @param {Object} options
  * @param {boolean} [options.parseUnquotedStrings=false] - whether to parse unquoted strings for colors or numbers with units
@@ -82,14 +72,7 @@ const toSass = (value, options={}) => {
 /**
  * Converts legacy Sass objects to their Javascript equivalents.
  *
- * ```javascript
- * const { fromSass, toSass } = require('sass-cast');
- *
- * const sassString = toSass('a sass string object');
- * const string = fromSass(sassString);
- * // 'a sass string object'
- * ```
- *
+ * @memberof legacy
  * @param {LegacyObject} object - a {@link https://sass-lang.com/documentation/js-api/modules#LegacyValue legacy Sass object}
  * @param {Object} options
  * @param {boolean} [options.preserveUnits=false] - By default, only the values of numbers are returned, not their units. If true, `fromSass` will return numbers as a two-item Array, i.e. [ value, unit ]

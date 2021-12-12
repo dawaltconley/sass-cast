@@ -19,6 +19,11 @@ the conversion is handled by Sass itself.
     *   [Parameters](#parameters)
 *   [fromSass](#fromsass)
     *   [Parameters](#parameters-1)
+*   [legacy](#legacy)
+    *   [toSass](#tosass-1)
+        *   [Parameters](#parameters-2)
+    *   [fromSass](#fromsass-1)
+        *   [Parameters](#parameters-3)
 
 ### toSass
 
@@ -65,6 +70,38 @@ const string = fromSass(sassString);
 #### Parameters
 
 *   `object` **Value** a [Sass value](https://sass-lang.com/documentation/js-api/classes/Value)
+*   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `{}`)
+
+    *   `options.preserveUnits` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, only the values of numbers are returned, not their units. If true, `fromSass` will return numbers as a two-item Array, i.e. \[ value, unit ] (optional, default `false`)
+    *   `options.rgbColors` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, colors are returned as strings. If true, `fromSass` will return colors as an object with `r`, `g`, `b`, and `a`, properties. (optional, default `false`)
+
+Returns **any** a Javascript value corresponding to the Sass input
+
+### legacy
+
+A separate set of methods to interface with Sass's legacy Javascript API.
+
+#### toSass
+
+Converts any Javascript object to an equivalent legacy Sass object.
+
+##### Parameters
+
+*   `value` **any** the value to be converted
+*   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `{}`)
+
+    *   `options.parseUnquotedStrings` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether to parse unquoted strings for colors or numbers with units (optional, default `false`)
+    *   `options.quotes` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the type of quotes to use when quoting Sass strings (single or double) (optional, default `"'"`)
+
+Returns **LegacyObject** a [legacy Sass object](https://sass-lang.com/documentation/js-api/modules#LegacyValue)
+
+#### fromSass
+
+Converts legacy Sass objects to their Javascript equivalents.
+
+##### Parameters
+
+*   `object` **LegacyObject** a [legacy Sass object](https://sass-lang.com/documentation/js-api/modules#LegacyValue)
 *   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `{}`)
 
     *   `options.preserveUnits` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, only the values of numbers are returned, not their units. If true, `fromSass` will return numbers as a two-item Array, i.e. \[ value, unit ] (optional, default `false`)

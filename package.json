@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test": "npx mocha",
-    "document": "npx documentation readme index.js --shallow --section Usage",
+    "document": "npx documentation readme index.js --section Usage",
     "prepublishOnly": "npm test; npm run document"
   },
   "keywords": [
