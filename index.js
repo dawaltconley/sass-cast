@@ -114,7 +114,7 @@ const fromSass = (obj, opt={}) => {
         }
         return obj.toString();
     } else if (obj instanceof sass.types.String) {
-        return unquotedString(obj.toString());
+        return unquotedString(obj.getValue());
     } else if (obj instanceof sass.types.List) {
         let list = [];
         for (let i = 0; i < obj.getLength(); i++) {
