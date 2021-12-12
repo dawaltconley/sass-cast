@@ -1,6 +1,6 @@
 {
   "name": "sass-cast",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Convert Javascript objects to Sass objects and vice versa.",
   "main": "index.js",
   "files": [
