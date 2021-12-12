@@ -110,7 +110,11 @@ const fromSass = (object, options={}) => {
     } else if (object instanceof sass.SassString) {
         return unquoteString(object.text);
     } else if (object instanceof sass.SassList) {
-        return object.asList.map(v => fromSass(v, options)).toArray();
+        let list = [];
+        for (let i = 0, value = object.get(i); value !== undefined; i++, value = object.get(i)) {
+            list.push(fromSass(value, options));
+        }
+        return list;
     } else if (object instanceof sass.SassMap) {
         return object.contents
             .mapEntries(([k, v]) => [ k.text, fromSass(v, options) ])
