@@ -1,65 +1,5 @@
+const { isQuoted, quoteString, unquoteString, parseString } = require('./utils.js');
 const sass = require('sass');
-
-/**
- * Check if string is quoted
- * @private
- * @param {string} str
- * @return {boolean}
- */
-const isQuoted = str => /^['"].*['"]$/.test(str);
-
-/**
- * Surrounds a string with quotes
- * @private
- * @param {string} str
- * @param {string} q - quotes, double or single
- * @return {string}
- */
-const quotedString = (str, q) => {
-    if (isQuoted(str)) {
-        q = str[0];
-        str = str.slice(1, -1);
-    }
-    let r = new RegExp(q, 'g');
-    let quoted = q + str.replace(r, '\\'+q) + q;
-    return new sass.types.String(quoted);
-};
-
-/**
- * Unquotes a string
- * @private
- * @param {string} str
- * @return {string}
- */
-const unquotedString = str => isQuoted(str) ? str.slice(1, -1) : str;
-
-/**
- * Parse a string as a Sass object
- * cribbed from davidkpiano/sassport
- *
- * @private
- * @param {string} str
- * @return {LegacyObject}
- */
-const parseString = str => {
-    let result;
-
-    try {  
-        sass.renderSync({
-            data: `$_: ___((${str}));`,
-            functions: {
-                '___($value)': (value) => {
-                    result = value;
-                    return value;
-                }
-            }
-        });
-    } catch(e) {
-        return str;
-    }
-
-    return result;
-};
 
 /**
  * Converts any Javascript object to an equivalent Sass object.
@@ -114,7 +54,7 @@ const toSass = (value, options={}) => {
             if (parsed instanceof sass.types.Color || parsed instanceof sass.types.Number)
                 return parsed;
         }
-        return quotedString(value, q);
+        return quoteString(value, q);
     } else if (typeof value === 'object') {
         if (Array.isArray(value)) {
             let sassList = new sass.types.List(value.length);
@@ -126,7 +66,7 @@ const toSass = (value, options={}) => {
             let newObj = Object.entries(value);
             let sassMap = new sass.types.Map(newObj.length);
             newObj.forEach(([ key, value ], i) => {
-                sassMap.setKey(i, quotedString(key, q)); // can produce invalid Scss if unquoted
+                sassMap.setKey(i, quoteString(key, q)); // can produce invalid Scss if unquoted
                 sassMap.setValue(i, toSass(value, options));
             });
             return sassMap;
@@ -179,7 +119,7 @@ const fromSass = (object, options={}) => {
         }
         return object.toString();
     } else if (object instanceof sass.types.String) {
-        return unquotedString(object.getValue());
+        return unquoteString(object.getValue());
     } else if (object instanceof sass.types.List) {
         let list = [];
         for (let i = 0; i < object.getLength(); i++) {
@@ -192,7 +132,7 @@ const fromSass = (object, options={}) => {
         let map = {};
         for (let i = 0; i < object.getLength(); i++) {
             let key = object.getKey(i), value = object.getValue(i);
-            key = unquotedString(key.toString());
+            key = unquoteString(key.toString());
             map[key] = fromSass(value, options);
         }
         return map;
