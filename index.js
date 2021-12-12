@@ -119,7 +119,7 @@ const fromSass = (obj, opt={}) => {
         let list = [];
         for (let i = 0; i < obj.getLength(); i++) {
             let value = obj.getValue(i);
-            value = fromSass(value);
+            value = fromSass(value, opt);
             list.push(value);
         }
         return list;
@@ -128,7 +128,7 @@ const fromSass = (obj, opt={}) => {
         for (let i = 0; i < obj.getLength(); i++) {
             let key = obj.getKey(i), value = obj.getValue(i);
             key = unquotedString(key.toString());
-            map[key] = fromSass(value);
+            map[key] = fromSass(value, opt);
         }
         return map;
     } else {
