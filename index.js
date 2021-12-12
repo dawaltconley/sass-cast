@@ -1,15 +1,20 @@
-/*
- * Converting JS objects to Sass objects using Sass's JS API.
- *
- * Slower than regex or JS-native parsing methods like AS-Devs/json2scss-map,
- * but more-or-less guaranteed to be accurate, since the majority of
- * the conversion is handled by Sass itself.
- */
-
 const sass = require('sass');
 
+/**
+ * Check if string is quoted
+ * @private
+ * @param {string} str
+ * @return {boolean}
+ */
 const isQuoted = str => /^['"].*['"]$/.test(str);
 
+/**
+ * Surrounds a string with quotes
+ * @private
+ * @param {string} str
+ * @param {string} q - quotes, double or single
+ * @return {string}
+ */
 const quotedString = (str, q) => {
     if (isQuoted(str)) {
         q = str[0];
@@ -20,15 +25,28 @@ const quotedString = (str, q) => {
     return new sass.types.String(quoted);
 };
 
+/**
+ * Unquotes a string
+ * @private
+ * @param {string} str
+ * @return {string}
+ */
 const unquotedString = str => isQuoted(str) ? str.slice(1, -1) : str;
 
-// cribbed from davidkpiano/sassport
-const parseString = obj => {
+/**
+ * Parse a string as a Sass object
+ * cribbed from davidkpiano/sassport
+ *
+ * @private
+ * @param {string} str
+ * @return {LegacyObject}
+ */
+const parseString = str => {
     let result;
 
     try {  
         sass.renderSync({
-            data: `$_: ___((${obj}));`,
+            data: `$_: ___((${str}));`,
             functions: {
                 '___($value)': (value) => {
                     result = value;
@@ -37,102 +55,149 @@ const parseString = obj => {
             }
         });
     } catch(e) {
-        return obj;
+        return str;
     }
 
     return result;
 };
 
-const toSass = (obj, opt={}) => {
+/**
+ * Converts any Javascript object to an equivalent Sass object.
+ * The return value will be an object from the [legacy function API](https://sass-lang.com/documentation/js-api/modules/types),
+ * which can be stored as a string using the `toString()` method.
+ *
+ * ```javascript
+ * const { toSass } = require('sass-cast');
+ * 
+ * const string = toSass('a simple string');
+ * // quoted SassString => "'a simple string'"
+ * 
+ * const map = toSass({
+ *   key: 'value',
+ *   nested: {
+ *     'complex//:key': [ null, 4 ],
+ *   }
+ * });
+ * // SassMap => "('key': 'value', 'nested': ('complex//:key': (null, 4)))"
+ *
+ * This method is recursive and will convert the values of any array or object, as well as the array or object itself.
+ * ```
+ *
+ * @param {*} value - the value to be converted
+ * @param {Object} options
+ * @param {boolean} [options.parseUnquotedStrings=false] - whether to parse unquoted strings for colors or numbers with units
+ * @param {string} [options.quotes="'"] - the type of quotes to use when quoting Sass strings (single or double)
+ * @return {LegacyObject} - a {@link https://sass-lang.com/documentation/js-api/modules#LegacyValue legacy Sass object}
+ */
+
+const toSass = (value, options={}) => {
     let {
         parseUnquotedStrings = false,
         quotes = "'",
-    } = opt;
+    } = options;
     const q = quotes == '"' ? '"' : "'";
-    if (obj === null || obj === undefined) {
+    if (value === null || value === undefined) {
         return sass.types.Null.NULL;
-    } else if (typeof obj === 'boolean') {
-        return obj
+    } else if (typeof value === 'boolean') {
+        return value
             ? sass.types.Boolean.TRUE
             : sass.types.Boolean.FALSE;
-    } else if (typeof obj === 'number') {
-        return new sass.types.Number(obj);
-    } else if (typeof obj === 'string') {
+    } else if (typeof value === 'number') {
+        return new sass.types.Number(value);
+    } else if (typeof value === 'string') {
         // Valid JS strings can produce invalid Scss if unquoted,
         // so we want to wrap all strings in quotes,
         // except for strings that parse as colors or numbers.
         // Parsing these is expensive, so it must be enabled by an argument.
-        if (parseUnquotedStrings && !isQuoted(obj)) {
-            let parsed = parseString(obj);
+        if (parseUnquotedStrings && !isQuoted(value)) {
+            let parsed = parseString(value);
             if (parsed instanceof sass.types.Color || parsed instanceof sass.types.Number)
                 return parsed;
         }
-        return quotedString(obj, q);
-    } else if (typeof obj === 'object') {
-        if (Array.isArray(obj)) {
-            let sassList = new sass.types.List(obj.length);
-            obj.forEach((item, i) => {
-                sassList.setValue(i, toSass(item, opt));
+        return quotedString(value, q);
+    } else if (typeof value === 'object') {
+        if (Array.isArray(value)) {
+            let sassList = new sass.types.List(value.length);
+            value.forEach((item, i) => {
+                sassList.setValue(i, toSass(item, options));
             });
             return sassList;
         } else {
-            let newObj = Object.entries(obj);
+            let newObj = Object.entries(value);
             let sassMap = new sass.types.Map(newObj.length);
             newObj.forEach(([ key, value ], i) => {
                 sassMap.setKey(i, quotedString(key, q)); // can produce invalid Scss if unquoted
-                sassMap.setValue(i, toSass(value, opt));
+                sassMap.setValue(i, toSass(value, options));
             });
             return sassMap;
         }
-    } else if (typeof obj === 'function') {
-        return toSass(obj(), opt);
+    } else if (typeof value === 'function') {
+        return toSass(value(), options);
     }
 };
 
-const fromSass = (obj, opt={}) => {
+/**
+ * Converts legacy Sass objects to their Javascript equivalents.
+ *
+ * ```javascript
+ * const { fromSass, toSass } = require('sass-cast');
+ *
+ * const sassString = toSass('a sass string object');
+ * const string = fromSass(sassString);
+ * // 'a sass string object'
+ * ```
+ *
+ * @param {LegacyObject} object - a {@link https://sass-lang.com/documentation/js-api/modules#LegacyValue legacy Sass object}
+ * @param {Object} options
+ * @param {boolean} [options.preserveUnits=false] - By default, only the values of numbers are returned, not their units. If true, `fromSass` will return numbers as a two-item Array, i.e. [ value, unit ]
+ * @param {boolean} [options.rgbColors=false] - By default, colors are returned as strings. If true, `fromSass` will return colors as an object with `r`, `g`, `b`, and `a`, properties.
+ * @return {*} - a Javascript value corresponding to the Sass input
+ */
+
+const fromSass = (object, options={}) => {
     let {
         preserveUnits = false,
         rgbColors = false
-    } = opt;
-    if (obj instanceof sass.types.Null) {
+    } = options;
+    if (object instanceof sass.types.Null) {
         return null;
-    } else if (obj instanceof sass.types.Boolean) {
-        return obj.value;
-    } else if (obj instanceof sass.types.Number) {
+    } else if (object instanceof sass.types.Boolean) {
+        return object.value;
+    } else if (object instanceof sass.types.Number) {
         if (preserveUnits) {
-            return [ obj.getValue(), obj.getUnit() ];
+            return [ object.getValue(), object.getUnit() ];
         }
-        return obj.getValue();
-    } else if (obj instanceof sass.types.Color) {
+        return object.getValue();
+    } else if (object instanceof sass.types.Color) {
         if (rgbColors) {
             return {
-                r: obj.getR(),
-                g: obj.getG(),
-                b: obj.getB(),
-                a: obj.getA()
+                r: object.getR(),
+                g: object.getG(),
+                b: object.getB(),
+                a: object.getA()
             };
         }
-        return obj.toString();
-    } else if (obj instanceof sass.types.String) {
-        return unquotedString(obj.getValue());
-    } else if (obj instanceof sass.types.List) {
+        return object.toString();
+    } else if (object instanceof sass.types.String) {
+        return unquotedString(object.getValue());
+    } else if (object instanceof sass.types.List) {
         let list = [];
-        for (let i = 0; i < obj.getLength(); i++) {
-            let value = obj.getValue(i);
-            value = fromSass(value, opt);
+        for (let i = 0; i < object.getLength(); i++) {
+            let value = object.getValue(i);
+            value = fromSass(value, options);
             list.push(value);
         }
         return list;
-    } else if (obj instanceof sass.types.Map) {
+    } else if (object instanceof sass.types.Map) {
         let map = {};
-        for (let i = 0; i < obj.getLength(); i++) {
-            let key = obj.getKey(i), value = obj.getValue(i);
+        for (let i = 0; i < object.getLength(); i++) {
+            let key = object.getKey(i), value = object.getValue(i);
             key = unquotedString(key.toString());
-            map[key] = fromSass(value, opt);
+            map[key] = fromSass(value, options);
         }
         return map;
     } else {
-        return obj;
+        return object;
     }
 };
 
