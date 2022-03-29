@@ -1,7 +1,2 @@
-node_modules/
 dist/
-.DS_Store
-*~
-*.swp
-*.swo
-sh.exe.stackdump
+package-lock.json
