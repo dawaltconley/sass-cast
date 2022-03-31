@@ -3,7 +3,7 @@ const sass = require('sass');
 
 /**
  * @namespace legacy 
- * @description A separate set of methods to interface with Sass's legacy Javascript API.
+ * @description Identical methods that interface with Sass's legacy Javascript API for older versions of Sass. Use `require('sass-cast/legacy')`.
  */
 
 /**

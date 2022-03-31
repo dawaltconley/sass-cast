@@ -172,5 +172,4 @@ module.exports = {
     toSass,
     fromSass,
     sassFunctions,
-    legacy: require('./legacy.js')
 };

@@ -128,7 +128,7 @@ Returns **Value** a [Sass value](https://sass-lang.com/documentation/js-api/clas
 
 ### legacy
 
-A separate set of methods to interface with Sass's legacy Javascript API.
+Identical methods that interface with Sass's legacy Javascript API for older versions of Sass. Use `require('sass-cast/legacy')`.
 
 #### toSass
 

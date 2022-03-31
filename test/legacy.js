@@ -1,5 +1,5 @@
 delete require.cache
-const { toSass, fromSass } = require('../index').legacy
+const { toSass, fromSass } = require('../legacy')
 const { types, ...sass } = require('sass')
 const assert = require('assert').strict
 
