@@ -7,9 +7,13 @@
     "utils.js",
     "legacy.js"
   ],
+  "exports": {
+    ".": "./index.js",
+    "./legacy": "./legacy.js"
+  },
   "scripts": {
     "test": "npx mocha",
-    "document": "npx documentation readme index.js --section Usage",
+    "document": "npx documentation readme index.js legacy.js --section Usage",
     "prepublishOnly": "npm test; npm run document"
   },
   "keywords": [
