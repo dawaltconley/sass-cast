@@ -1,0 +1,127 @@
+.responsive {
+  color: blue;
+}
+@media (min-width: 600px) {
+  .responsive--mobile {
+    color: red;
+  }
+}
+@media (min-width: 800px) {
+  .responsive--min {
+    color: red;
+  }
+}
+@media (min-width: 1000px) {
+  .responsive--mid {
+    color: red;
+  }
+}
+@media (min-width: 1284px) {
+  .responsive--max {
+    color: red;
+  }
+}
+
+.email-icon, .email-icon:hover {
+  color: #d14836 !important;
+  background-color: #d14836 !important;
+  border-color: #d14836 !important;
+}
+
+.phone-icon, .phone-icon:hover {
+  color: #45a145 !important;
+  background-color: #45a145 !important;
+  border-color: #45a145 !important;
+}
+
+.location-icon, .location-icon:hover {
+  color: #208000 !important;
+  background-color: #208000 !important;
+  border-color: #208000 !important;
+}
+
+.google-plus-icon, .google-plus-icon:hover {
+  color: #dd4b39 !important;
+  background-color: #dd4b39 !important;
+  border-color: #dd4b39 !important;
+}
+
+.facebook-icon, .facebook-icon:hover {
+  color: #3b5998 !important;
+  background-color: #3b5998 !important;
+  border-color: #3b5998 !important;
+}
+
+.twitter-icon, .twitter-icon:hover {
+  color: #1da1f2 !important;
+  background-color: #1da1f2 !important;
+  border-color: #1da1f2 !important;
+}
+
+.youtube-icon, .youtube-icon:hover {
+  color: #cd201f !important;
+  background-color: #cd201f !important;
+  border-color: #cd201f !important;
+}
+
+.linkedin-icon, .linkedin-icon:hover {
+  color: #0077b5 !important;
+  background-color: #0077b5 !important;
+  border-color: #0077b5 !important;
+}
+
+.vimeo-icon, .vimeo-icon:hover {
+  color: #1ab7ea !important;
+  background-color: #1ab7ea !important;
+  border-color: #1ab7ea !important;
+}
+
+.instagram-icon, .instagram-icon:hover {
+  color: #c13584 !important;
+  background-color: #c13584 !important;
+  border-color: #c13584 !important;
+}
+
+.bandcamp-icon, .bandcamp-icon:hover {
+  color: #629aa9 !important;
+  background-color: #629aa9 !important;
+  border-color: #629aa9 !important;
+}
+
+.soundcloud-icon, .soundcloud-icon:hover {
+  color: #ff8800 !important;
+  background-color: #ff8800 !important;
+  border-color: #ff8800 !important;
+}
+
+.spotify-icon, .spotify-icon:hover {
+  color: #1db954 !important;
+  background-color: #1db954 !important;
+  border-color: #1db954 !important;
+}
+
+.apple_music-icon, .apple_music-icon:hover {
+  color: inherit !important;
+  background-color: inherit !important;
+  border-color: inherit !important;
+}
+
+.imdb-icon, .imdb-icon:hover {
+  color: #f5de50 !important;
+  background-color: #f5de50 !important;
+  border-color: #f5de50 !important;
+}
+
+.first-icon, .first-icon:hover {
+  color: #d14836 !important;
+  background-color: #d14836 !important;
+  border-color: #d14836 !important;
+}
+
+.splash {
+  background-image: url(https://images.pexels.com/photos/6025785/pexels-photo-6025785.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260);
+}
+
+.splash-2 {
+  background-image: url(https://images.pexels.com/photos/6025785/pexels-photo-6025785.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260);
+}

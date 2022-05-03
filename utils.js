@@ -96,11 +96,21 @@ const parseStringLegacy = str => {
  */
 const legacyToString = obj => (obj.dartValue || obj).toString();
 
+/**
+ * Return a value from an object and a list of keys.
+ * @private
+ * @param {Object|Array} obj
+ * @param {*[]} attrs
+ */
+const getAttr = (obj, attrs) =>
+  attrs.reduce((o, attr) => o[attr], obj);
+
 module.exports = {
     isQuoted,
     quoteString,
     unquoteString,
     parseString,
     parseStringLegacy,
-    legacyToString
+    legacyToString,
+    getAttr,
 };

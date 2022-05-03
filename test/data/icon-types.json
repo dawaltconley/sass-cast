@@ -1,0 +1,146 @@
+[
+  {
+    "color": "#d14836",
+    "fa": {
+      "default": "envelope",
+      "square": "envelope-square"
+    },
+    "label": "Email Address",
+    "type": "email"
+  },
+  {
+    "color": "#45a145",
+    "fa": {
+      "default": "phone",
+      "square": "phone-square"
+    },
+    "label": "Phone Number",
+    "type": "phone"
+  },
+  {
+    "color": "#208000",
+    "fa": {
+      "default": "map-marker-alt"
+    },
+    "label": "Location",
+    "type": "location"
+  },
+  {
+    "brand": true,
+    "color": "#dd4b39",
+    "fa": {
+      "default": "google-plus",
+      "simple": "google-plus-g",
+      "square": "google-plus-square"
+    },
+    "label": "Google Plus",
+    "type": "google-plus"
+  },
+  {
+    "brand": true,
+    "color": "#3b5998",
+    "fa": {
+      "default": "facebook",
+      "simple": "facebook-f",
+      "square": "facebook-square"
+    },
+    "label": "Facebook",
+    "type": "facebook"
+  },
+  {
+    "brand": true,
+    "color": "#1da1f2",
+    "fa": {
+      "default": "twitter",
+      "square": "twitter-square"
+    },
+    "label": "Twitter",
+    "type": "twitter"
+  },
+  {
+    "brand": true,
+    "color": "#cd201f",
+    "fa": {
+      "default": "youtube",
+      "square": "youtube-square"
+    },
+    "label": "YouTube",
+    "type": "youtube"
+  },
+  {
+    "brand": true,
+    "color": "#0077b5",
+    "fa": {
+      "default": "linkedin",
+      "simple": "linkedin-in"
+    },
+    "label": "LinkedIn",
+    "type": "linkedin"
+  },
+  {
+    "brand": true,
+    "color": "#1ab7ea",
+    "fa": {
+      "default": "vimeo",
+      "simple": "vimeo-v",
+      "square": "vimeo-square"
+    },
+    "label": "Vimeo",
+    "type": "vimeo"
+  },
+  {
+    "brand": true,
+    "color": "#c13584",
+    "fa": {
+      "default": "instagram"
+    },
+    "label": "Instagram",
+    "type": "instagram"
+  },
+  {
+    "brand": true,
+    "color": "#629aa9",
+    "fa": {
+      "default": "bandcamp"
+    },
+    "label": "Bandcamp",
+    "type": "bandcamp"
+  },
+  {
+    "brand": true,
+    "color": "#ff8800",
+    "fa": {
+      "default": "soundcloud"
+    },
+    "label": "SoundCloud",
+    "type": "soundcloud"
+  },
+  {
+    "brand": true,
+    "color": "#1db954",
+    "fa": {
+      "default": "spotify"
+    },
+    "label": "Spotify",
+    "type": "spotify"
+  },
+  {
+    "brand": true,
+    "color": null,
+    "fa": {
+      "default": "itunes-note",
+      "square": "itunes"
+    },
+    "label": "Apple Music",
+    "type": "apple_music"
+  },
+  {
+    "brand": true,
+    "color": "#f5de50",
+    "fa": {
+      "default": "imdb"
+    },
+    "label": "IMDB",
+    "type": "imdb"
+  }
+]

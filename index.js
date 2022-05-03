@@ -1,4 +1,4 @@
-const { isQuoted, unquoteString, parseString } = require('./utils.js');
+const { isQuoted, unquoteString, parseString, getAttr } = require('./utils.js');
 const { OrderedMap } = require('immutable');
 const sass = require('sass');
 
@@ -124,8 +124,29 @@ const fromSass = (object, options={}) => {
     }
 };
 
+const sassFunctions = {
+    'require($module, $properties: (), $parseUnquotedStrings: false)': args => {
+        const moduleName = args[0].assertString('module').text;
+        const properties = args[1].realNull && fromSass(new sass.SassList(args[1].asList))
+        const parseUnquotedStrings = args[2].isTruthy;
+        const options = { parseUnquotedStrings };
+        const convert = data => toSass(
+            properties ? getAttr(data, properties) : data,
+            options
+        );
+
+        let mod = require(moduleName);
+        if (typeof mod === 'function')
+            mod = mod();
+        if (mod instanceof Promise)
+            return mod.then(convert);
+        return convert(mod);
+    },
+};
+
 module.exports = {
     toSass,
     fromSass,
+    sassFunctions,
     legacy: require('./legacy.js')
 };

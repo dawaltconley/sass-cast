@@ -1,0 +1,52 @@
+@use 'sass:map';
+@use 'sass:string';
+
+// Basic import from local data
+$breakpoints: require('./test/data/bp');
+.responsive {
+    color: blue;
+    @each $name, $bp in $breakpoints {
+        &--#{$name} {
+            @media (min-width: #{$bp * 1px}) {
+                color: red;
+            }
+        }
+    }
+}
+
+// Requiring from an installed package
+$icon-types: require('@dawaltconley/media-icons/dist/icon-types', $parseUnquotedStrings: true);
+@each $icon in $icon-types {
+    $class-name: '#{map.get($icon, type)}-icon';
+    $color: map.get($icon, color) or inherit;
+    .#{$class-name} {
+        &, &:hover {
+            color: $color !important;
+            background-color: $color !important;
+            border-color: $color !important;
+        }
+    }
+}
+
+// Requiring specific properties of an installed package
+$icon-color: require('@dawaltconley/media-icons/dist/icon-types', (0 'color'), $parseUnquotedStrings: true);
+.first-icon {
+    &, &:hover {
+        color: $icon-color !important;
+        background-color: $icon-color !important;
+        border-color: $icon-color !important;
+    }
+}
+
+// Requiring a function
+$place: require('./test/data/sync');
+.splash {
+    $bg: map.get($place, image);
+    background-image: url(string.unquote($bg));
+}
+
+// Requiring a property returned by a function
+.splash-2 {
+    $bg: require('./test/data/sync', (image,));
+    background-image: url(string.unquote($bg));
+}
