@@ -168,7 +168,7 @@ describe('fromSass', () => {
     describe('{ rgbColors: true }', () => {
         let opt = { rgbColors: true }
         it('should return colors as rbga objects', () => {
-            let input = { red: 240, green: 33, blue: 109 };
+            let input = { red: 240, green: 33, blue: 109 }
             let output = {
                 ...input,
                 hue: 337.9710144927536,
