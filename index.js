@@ -124,7 +124,32 @@ const fromSass = (object, options={}) => {
     }
 };
 
+/**
+ * An object defining Sass utility functions.
+ *
+ * @example <caption>Pass to sass using the JS API</caption>
+ * const { sassFunctions } = require('sass-cast');
+ * const sass = require('sass');
+ * 
+ * sass.compile('main.scss', { functions: sassFunctions });
+ */
 const sassFunctions = {
+    /**
+     * Sass function for importing data from Javascript or JSON files.
+     * Calls the CommonJS `require` function under the hood.
+     * 
+     * #### Examples
+     *
+     * ```scss
+     * // import config info from tailwindcss
+     * $tw: require('./tailwind.config.js', $parseUnquotedStrings: true);
+     * $tw-colors: map.get($tw, theme, extend, colors);
+     * ```
+     * @param {SassString} $module - Path to the file or module. Relative paths are relative to the Node process running Sass compilation.
+     * @param {SassList} [$properties=()] - List of properties, if you only want to parse part of the module data.
+     * @param {SassBoolean} [$parseUnquotedStrings=false] - Passed as an option to {@link #tosass toSass}.
+     * @return {Value} - a {@link https://sass-lang.com/documentation/js-api/classes/Value Sass value} 
+     */
     'require($module, $properties: (), $parseUnquotedStrings: false)': args => {
         const moduleName = args[0].assertString('module').text;
         const properties = args[1].realNull && fromSass(args[1].asList);

@@ -19,11 +19,16 @@ the conversion is handled by Sass itself.
     *   [Parameters](#parameters)
 *   [fromSass](#fromsass)
     *   [Parameters](#parameters-1)
+*   [sassFunctions](#sassfunctions)
+    *   [Examples](#examples)
+    *   [require($module, $properties: (), $parseUnquotedStrings: false)](#requiremodule-properties--parseunquotedstrings-false)
+        *   [Examples](#examples-1)
+        *   [Parameters](#parameters-2)
 *   [legacy](#legacy)
     *   [toSass](#tosass-1)
-        *   [Parameters](#parameters-2)
-    *   [fromSass](#fromsass-1)
         *   [Parameters](#parameters-3)
+    *   [fromSass](#fromsass-1)
+        *   [Parameters](#parameters-4)
 
 ### toSass
 
@@ -76,6 +81,43 @@ const string = fromSass(sassString);
     *   `options.rgbColors` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, colors are returned as strings. If true, `fromSass` will return colors as an object with `r`, `g`, `b`, and `a`, properties. (optional, default `false`)
 
 Returns **any** a Javascript value corresponding to the Sass input
+
+### sassFunctions
+
+An object defining Sass utility functions.
+
+#### Examples
+
+Pass to sass using the JS API
+
+```javascript
+const { sassFunctions } = require('sass-cast');
+const sass = require('sass');
+
+sass.compile('main.scss', { functions: sassFunctions });
+```
+
+#### require($module, $properties: (), $parseUnquotedStrings: false)
+
+Sass function for importing data from Javascript or JSON files.
+Calls the CommonJS `require` function under the hood.
+
+##### Examples
+
+```scss
+// import config info from tailwindcss
+$tw: require('./tailwind.config.js', $parseUnquotedStrings: true);
+$tw-colors: map.get($tw, theme, extend, colors);
+```
+
+##### Parameters
+
+*   `args`  
+*   `$module` **SassString** Path to the file or module. Relative paths are relative to the Node process running Sass compilation.
+*   `$properties` **SassList** List of properties, if you only want to parse part of the module data. (optional, default `()`)
+*   `$parseUnquotedStrings` **SassBoolean** Passed as an option to [toSass](#tosass). (optional, default `false`)
+
+Returns **Value** a [Sass value](https://sass-lang.com/documentation/js-api/classes/Value)
 
 ### legacy
 
