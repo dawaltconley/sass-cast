@@ -108,7 +108,7 @@ const fromSass = (object, options={}) => {
         return object.toString();
     } else if (object instanceof sass.SassString) {
         return unquoteString(object.text);
-    } else if (object instanceof sass.SassList || object instanceof List) {
+    } else if (object instanceof sass.SassList || List.isList(object)) {
         let list = [];
         for (let i = 0, value = object.get(i); value !== undefined; i++, value = object.get(i)) {
             list.push(fromSass(value, options));
