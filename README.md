@@ -17,12 +17,14 @@ the conversion is handled by Sass itself.
 
 *   [toSass](#tosass)
     *   [Parameters](#parameters)
+    *   [Examples](#examples)
 *   [fromSass](#fromsass)
     *   [Parameters](#parameters-1)
+    *   [Examples](#examples-1)
 *   [sassFunctions](#sassfunctions)
-    *   [Examples](#examples)
+    *   [Examples](#examples-2)
     *   [require($module, $properties: (), $parseUnquotedStrings: false)](#requiremodule-properties--parseunquotedstrings-false)
-        *   [Examples](#examples-1)
+        *   [Examples](#examples-3)
         *   [Parameters](#parameters-2)
 *   [legacy](#legacy)
     *   [toSass](#tosass-1)
@@ -33,6 +35,18 @@ the conversion is handled by Sass itself.
 ### toSass
 
 Converts any Javascript object to an equivalent Sass value.
+
+This method is recursive and will convert the values of any array or object,
+as well as the array or object itself.
+
+#### Parameters
+
+*   `value` **any** the value to be converted
+*   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `{}`)
+
+    *   `options.parseUnquotedStrings` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether to parse unquoted strings for colors or numbers with units (optional, default `false`)
+
+#### Examples
 
 ```javascript
 const { toSass } = require('sass-cast');
@@ -49,28 +63,11 @@ const map = toSass({
 // SassMap => '("key": "value", "nested": ("complex//:key": (null, 4)))'
 ```
 
-This method is recursive and will convert the values of any array or object, as well as the array or object itself.
-
-#### Parameters
-
-*   `value` **any** the value to be converted
-*   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `{}`)
-
-    *   `options.parseUnquotedStrings` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether to parse unquoted strings for colors or numbers with units (optional, default `false`)
-
 Returns **Value** a [Sass value](https://sass-lang.com/documentation/js-api/classes/Value)
 
 ### fromSass
 
 Converts Sass values to their Javascript equivalents.
-
-```javascript
-const { fromSass, toSass } = require('sass-cast');
-
-const sassString = toSass('a sass string object');
-const string = fromSass(sassString);
-// 'a sass string object'
-```
 
 #### Parameters
 
@@ -79,6 +76,16 @@ const string = fromSass(sassString);
 
     *   `options.preserveUnits` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, only the values of numbers are returned, not their units. If true, `fromSass` will return numbers as a two-item Array, i.e. \[ value, unit ] (optional, default `false`)
     *   `options.rgbColors` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, colors are returned as strings. If true, `fromSass` will return colors as an object with `r`, `g`, `b`, and `a`, properties. (optional, default `false`)
+
+#### Examples
+
+```javascript
+const { fromSass, toSass } = require('sass-cast');
+
+const sassString = toSass('a sass string object');
+const string = fromSass(sassString);
+// 'a sass string object'
+```
 
 Returns **any** a Javascript value corresponding to the Sass input
 

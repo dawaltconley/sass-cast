@@ -5,7 +5,10 @@ const sass = require('sass');
 /**
  * Converts any Javascript object to an equivalent Sass value.
  *
- * ```javascript
+ * This method is recursive and will convert the values of any array or object,
+ * as well as the array or object itself.
+ *
+ * @example
  * const { toSass } = require('sass-cast');
  * 
  * const string = toSass('a simple string');
@@ -18,9 +21,6 @@ const sass = require('sass');
  *   }
  * });
  * // SassMap => '("key": "value", "nested": ("complex//:key": (null, 4)))'
- * ```
- *
- * This method is recursive and will convert the values of any array or object, as well as the array or object itself.
  *
  * @param {*} value - the value to be converted
  * @param {Object} options
@@ -72,13 +72,12 @@ const colorProperties = [ 'red', 'green', 'blue', 'hue', 'lightness', 'saturatio
 /**
  * Converts Sass values to their Javascript equivalents.
  *
- * ```javascript
+ * @example
  * const { fromSass, toSass } = require('sass-cast');
  *
  * const sassString = toSass('a sass string object');
  * const string = fromSass(sassString);
  * // 'a sass string object'
- * ```
  *
  * @param {Value} object - a {@link https://sass-lang.com/documentation/js-api/classes/Value Sass value}
  * @param {Object} options
