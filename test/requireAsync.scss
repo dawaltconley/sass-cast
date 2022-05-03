@@ -1,13 +1,13 @@
 @use 'sass:map';
 @use 'sass:string';
 
-$place: require('./test/data/async.js');
+$place: require('./test/data/async.js', $resolveFunctions: true);
 .splash-async {
     $bg: map.get($place, image);
     background-image: url(string.unquote($bg));
 }
 
 .splash-async-2 {
-    $bg: require('./test/data/async', image);
+    $bg: require('./test/data/async', image, $resolveFunctions: true);
     background-image: url(string.unquote($bg));
 }

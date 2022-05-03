@@ -23,7 +23,7 @@ the conversion is handled by Sass itself.
     *   [Examples](#examples-1)
 *   [sassFunctions](#sassfunctions)
     *   [Examples](#examples-2)
-    *   [require($module, $properties: (), $parseUnquotedStrings: false)](#requiremodule-properties--parseunquotedstrings-false)
+    *   [require($module, $properties: (), $parseUnquotedStrings: false, $resolveFunctions: false)](#requiremodule-properties--parseunquotedstrings-false-resolvefunctions-false)
         *   [Examples](#examples-3)
         *   [Parameters](#parameters-2)
 *   [legacy](#legacy)
@@ -45,6 +45,7 @@ as well as the array or object itself.
 *   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `{}`)
 
     *   `options.parseUnquotedStrings` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether to parse unquoted strings for colors or numbers with units (optional, default `false`)
+    *   `options.resolveFunctions` **([boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>)** if true, resolve functions and attempt to cast their return values. if an array, pass as arguments when resolving (optional, default `false`)
 
 #### Examples
 
@@ -104,7 +105,7 @@ const sass = require('sass');
 sass.compile('main.scss', { functions: sassFunctions });
 ```
 
-#### require($module, $properties: (), $parseUnquotedStrings: false)
+#### require($module, $properties: (), $parseUnquotedStrings: false, $resolveFunctions: false)
 
 Sass function for importing data from Javascript or JSON files.
 Calls the CommonJS `require` function under the hood.
@@ -123,6 +124,7 @@ $tw-colors: map.get($tw, theme, extend, colors);
 *   `$module` **SassString** Path to the file or module. Relative paths are relative to the Node process running Sass compilation.
 *   `$properties` **SassList** List of properties, if you only want to parse part of the module data. (optional, default `()`)
 *   `$parseUnquotedStrings` **SassBoolean** Passed as an option to [toSass](#tosass). (optional, default `false`)
+*   `$resolveFunctions` **SassBoolean** Passed as an option to [toSass](#tosass). (optional, default `false`)
 
 Returns **Value** a [Sass value](https://sass-lang.com/documentation/js-api/classes/Value)
 
@@ -140,6 +142,7 @@ Converts any Javascript object to an equivalent legacy Sass object.
 *   `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**  (optional, default `{}`)
 
     *   `options.parseUnquotedStrings` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether to parse unquoted strings for colors or numbers with units (optional, default `false`)
+    *   `options.resolveFunctions` **([boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>)** if true, resolve functions and attempt to cast their return values. if an array, pass as arguments when resolving (optional, default `false`)
     *   `options.quotes` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the type of quotes to use when quoting Sass strings (single or double) (optional, default `"'"`)
 
 Returns **LegacyObject** a [legacy Sass object](https://sass-lang.com/documentation/js-api/modules#LegacyValue)

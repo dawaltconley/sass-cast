@@ -63,6 +63,9 @@ describe('legacy', () => {
                 toSass({ "nested object": { key: 'val', true: false } }).dartValue.toString(),
                 "('nested object': ('key': 'val', 'true': false))")
         })
+        it('should return null for a function', () => {
+            assert.equal(toSass(() => 'foo'), sass.NULL)
+        })
 
         describe('{ parseUnquotedStrings: true }', () => {
             let opt = { parseUnquotedStrings: true }
@@ -83,6 +86,19 @@ describe('legacy', () => {
                 assert.deepEqual(
                     toSass('0.45%', opt),
                     number(0.45, '%'))
+            })
+        })
+
+        describe('{ resolveFunctions: true }', () => {
+            it('should convert the result of a function', () => {
+                const opt = { resolveFunctions: true }
+                assert.deepEqual(toSass(() => 4, opt), number(4))
+                assert.deepEqual(toSass(() => 'foo', opt), string("'foo'"))
+            })
+            it('should convert the result of a function using arguments', () => {
+                const plus = (a, b) => a + b
+                assert.deepEqual(toSass(plus, { resolveFunctions: [5, 7] }), number(12))
+                assert.deepEqual(toSass(plus, { resolveFunctions: ['foo', 'bar'] }), string("'foobar'"))
             })
         })
     })

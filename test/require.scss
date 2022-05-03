@@ -39,7 +39,7 @@ $icon-color: require('@dawaltconley/media-icons/dist/icon-types', (0 'color'), $
 }
 
 // Requiring a function
-$place: require('./test/data/sync');
+$place: require('./test/data/sync', $resolveFunctions: true);
 .splash {
     $bg: map.get($place, image);
     background-image: url(string.unquote($bg));
@@ -47,6 +47,6 @@ $place: require('./test/data/sync');
 
 // Requiring a property returned by a function
 .splash-2 {
-    $bg: require('./test/data/sync', (image,));
+    $bg: require('./test/data/sync', (image,), $resolveFunctions: true);
     background-image: url(string.unquote($bg));
 }

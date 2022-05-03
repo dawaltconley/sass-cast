@@ -14,6 +14,7 @@ const sass = require('sass');
  * @param {*} value - the value to be converted
  * @param {Object} options
  * @param {boolean} [options.parseUnquotedStrings=false] - whether to parse unquoted strings for colors or numbers with units
+ * @param {boolean|*[]} [options.resolveFunctions=false] - if true, resolve functions and attempt to cast their return values. if an array, pass as arguments when resolving
  * @param {string} [options.quotes="'"] - the type of quotes to use when quoting Sass strings (single or double)
  * @return {LegacyObject} - a {@link https://sass-lang.com/documentation/js-api/modules#LegacyValue legacy Sass object}
  */
@@ -21,6 +22,7 @@ const sass = require('sass');
 const toSass = (value, options={}) => {
     let {
         parseUnquotedStrings = false,
+        resolveFunctions = false,
         quotes = "'",
     } = options;
     const q = quotes == '"' ? '"' : "'";
@@ -64,9 +66,11 @@ const toSass = (value, options={}) => {
             });
             return sassMap;
         }
-    } else if (typeof value === 'function') {
-        return toSass(value(), options);
+    } else if (resolveFunctions && typeof value === 'function') {
+        const args = Array.isArray(resolveFunctions) ? resolveFunctions : [];
+        return toSass(value(...args), options);
     }
+    return sass.types.Null.NULL;
 };
 
 /**

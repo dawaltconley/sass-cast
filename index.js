@@ -25,12 +25,14 @@ const sass = require('sass');
  * @param {*} value - the value to be converted
  * @param {Object} options
  * @param {boolean} [options.parseUnquotedStrings=false] - whether to parse unquoted strings for colors or numbers with units
+ * @param {boolean|*[]} [options.resolveFunctions=false] - if true, resolve functions and attempt to cast their return values. if an array, pass as arguments when resolving
  * @return {Value} - a {@link https://sass-lang.com/documentation/js-api/classes/Value Sass value} 
  */
 
 const toSass = (value, options={}) => {
     let {
         parseUnquotedStrings = false,
+        resolveFunctions = false,
     } = options;
     if (value instanceof sass.Value) {
         return value;
@@ -62,9 +64,11 @@ const toSass = (value, options={}) => {
             ]);
             return new sass.SassMap(sassMap);
         }
-    } else if (typeof value === 'function') {
-        return toSass(value(), options);
+    } else if (resolveFunctions && typeof value === 'function') {
+        const args = Array.isArray(resolveFunctions) ? resolveFunctions : [];
+        return toSass(value(...args), options);
     }
+    return sass.sassNull;
 };
 
 const colorProperties = [ 'red', 'green', 'blue', 'hue', 'lightness', 'saturation', 'whiteness', 'blackness', 'alpha' ];
@@ -147,20 +151,25 @@ const sassFunctions = {
      * @param {SassString} $module - Path to the file or module. Relative paths are relative to the Node process running Sass compilation.
      * @param {SassList} [$properties=()] - List of properties, if you only want to parse part of the module data.
      * @param {SassBoolean} [$parseUnquotedStrings=false] - Passed as an option to {@link #tosass toSass}.
+     * @param {SassBoolean} [$resolveFunctions=false] - Passed as an option to {@link #tosass toSass}.
      * @return {Value} - a {@link https://sass-lang.com/documentation/js-api/classes/Value Sass value} 
      */
-    'require($module, $properties: (), $parseUnquotedStrings: false)': args => {
+    'require($module, $properties: (), $parseUnquotedStrings: false, $resolveFunctions: false)': args => {
         const moduleName = args[0].assertString('module').text;
         const properties = args[1].realNull && fromSass(args[1].asList);
         const parseUnquotedStrings = args[2].isTruthy;
-        const options = { parseUnquotedStrings };
+        const resolveFunctions = args[3].isTruthy;
+        const options = {
+            parseUnquotedStrings,
+            resolveFunctions
+        };
         const convert = data => toSass(
             properties ? getAttr(data, properties) : data,
             options
         );
 
         let mod = require(moduleName);
-        if (typeof mod === 'function')
+        if (resolveFunctions && typeof mod === 'function')
             mod = mod();
         if (mod instanceof Promise)
             return mod.then(convert);
