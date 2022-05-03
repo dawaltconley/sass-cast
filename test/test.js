@@ -117,6 +117,9 @@ describe('fromSass', () => {
         assert.deepEqual(fromSass(toSass([ 'foo', 4, false ])), [ 'foo', 4, false ])
         assert.deepEqual(fromSass(toSass([ 'single item' ])), [ 'single item' ])
     })
+    it('should convert coerced lists to arrays', () => {
+        assert.deepEqual(fromSass(toSass('single item').asList), [ 'single item' ])
+    })
     it('should convert maps to objects', () => {
         let o = { foo: 'bar', baz: 4, 'lkjs:gs//': null }
         assert.deepEqual(fromSass(toSass(o)), o)

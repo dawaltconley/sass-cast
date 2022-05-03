@@ -1,5 +1,5 @@
 const { isQuoted, unquoteString, parseString, getAttr } = require('./utils.js');
-const { OrderedMap } = require('immutable');
+const { List, OrderedMap } = require('immutable');
 const sass = require('sass');
 
 /**
@@ -109,7 +109,7 @@ const fromSass = (object, options={}) => {
         return object.toString();
     } else if (object instanceof sass.SassString) {
         return unquoteString(object.text);
-    } else if (object instanceof sass.SassList) {
+    } else if (object instanceof sass.SassList || object instanceof List) {
         let list = [];
         for (let i = 0, value = object.get(i); value !== undefined; i++, value = object.get(i)) {
             list.push(fromSass(value, options));
@@ -127,7 +127,7 @@ const fromSass = (object, options={}) => {
 const sassFunctions = {
     'require($module, $properties: (), $parseUnquotedStrings: false)': args => {
         const moduleName = args[0].assertString('module').text;
-        const properties = args[1].realNull && fromSass(new sass.SassList(args[1].asList))
+        const properties = args[1].realNull && fromSass(args[1].asList);
         const parseUnquotedStrings = args[2].isTruthy;
         const options = { parseUnquotedStrings };
         const convert = data => toSass(
