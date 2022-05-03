@@ -43,10 +43,6 @@ const toSass = (value, options={}) => {
     } else if (typeof value === 'number') {
         return new sass.SassNumber(value);
     } else if (typeof value === 'string') {
-        // Valid JS strings can produce invalid Scss if unquoted,
-        // so we want to wrap all strings in quotes,
-        // except for strings that parse as colors or numbers.
-        // Parsing these is expensive, so it must be enabled by an argument.
         if (parseUnquotedStrings && !isQuoted(value)) {
             let parsed = parseString(value);
             if (parsed instanceof sass.SassColor || parsed instanceof sass.SassNumber)
