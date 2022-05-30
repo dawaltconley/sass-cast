@@ -164,7 +164,19 @@ const sassFunctions = {
             options
         );
 
-        let mod = require(moduleName);
+        let mod, paths = [ moduleName, `${process.cwd()}/${moduleName}` ];
+        for (let path of paths) {
+            try {
+                mod = require(path);
+                break;
+            } catch(e) {
+                if (e.code !== 'MODULE_NOT_FOUND') 
+                    throw e;
+                continue;
+            }
+        }
+        if (!mod) throw new Error(`Couldn't find module: ${moduleName}`);
+
         if (resolveFunctions && typeof mod === 'function')
             mod = mod();
         if (mod instanceof Promise)
