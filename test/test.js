@@ -9,23 +9,23 @@ const color = (...args) => new sass.SassColor(...args)
 
 describe('toSass', () => {
     it('should convert null and undefined', () => {
-        assert.deepEqual(toSass(null), sass.sassNull)
-        assert.deepEqual(toSass(undefined), sass.sassNull)
+        assert(toSass(null).equals(sass.sassNull))
+        assert(toSass(undefined).equals(sass.sassNull))
     })
     it('should convert booleans', () => {
-        assert.deepEqual(toSass(true), sass.sassTrue)
-        assert.deepEqual(toSass(false), sass.sassFalse)
+        assert(toSass(true).equals(sass.sassTrue))
+        assert(toSass(false).equals(sass.sassFalse))
     })
     it('should convert numbers', () => {
-        assert.deepEqual(toSass(140), number(140))
-        assert.deepEqual(toSass(140.0), number(140))
-        assert.deepEqual(toSass(1.40), number(1.4))
+        assert(toSass(140).equals(number(140)))
+        assert(toSass(140.0).equals(number(140)))
+        assert(toSass(1.40).equals(number(1.4)))
     })
     it('should convert strings', () => {
-        assert.deepEqual(toSass('foo'), string('foo'))
-        assert.deepEqual(toSass('foo bar baz'), string('foo bar baz'))
-        assert.deepEqual(toSass("'quoted string'"), string("'quoted string'"))
-        assert.deepEqual(toSass('"quoted string"'), string('"quoted string"'))
+        assert(toSass('foo').equals(string('foo')))
+        assert(toSass('foo bar baz').equals(string('foo bar baz')))
+        assert(toSass("'quoted string'").equals(string("'quoted string'")))
+        assert(toSass('"quoted string"').equals(string('"quoted string"')))
     })
     it('should include toString method on output values', () => {
         assert.equal(toSass(undefined).toString(), 'null')
@@ -76,22 +76,20 @@ describe('toSass', () => {
     describe('{ parseUnquotedStrings: true }', () => {
         let opt = { parseUnquotedStrings: true }
         it('should convert rgb strings to colors', () => {
-            assert.deepEqual(
-                toSass('rgb(100, 20, 255)', opt),
-                color({ red: 100, green: 20, blue: 255 }))
+            const result = toSass('rgb(100, 20, 255)', opt)
+            const expected = color({ red: 100, green: 20, blue: 255 })
+            assert(result.equals(expected))
         })
         it('should convert hex strings to colors', () => {
-            assert.equal(
-                toSass('#e77acc', opt).toString(),
-                color({ red: 231, green: 122, blue: 204 }).toString())
+            const result = toSass('#e77acc', opt)
+            const expected = color({ red: 231, green: 122, blue: 204 })
+            assert(result.equals(expected))
         })
         it('should convert number strings to numbers with units', () => {
-            assert.deepEqual(
-                toSass('140px', opt),
-                number(140, 'px'))
-            assert.deepEqual(
-                toSass('0.45%', opt).toString(),
-                number(0.45, '%').toString())
+            assert(toSass('140px', opt)
+                .equals(number(140, 'px')))
+            assert(toSass('0.45%', opt)
+                .equals(number(0.45, '%')))
         })
     })
 

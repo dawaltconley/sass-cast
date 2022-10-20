@@ -70,14 +70,14 @@ describe('legacy', () => {
         describe('{ parseUnquotedStrings: true }', () => {
             let opt = { parseUnquotedStrings: true }
             it('should convert rgb strings to colors', () => {
-                assert.deepEqual(
-                    toSass('rgb(100, 20, 255)', opt),
-                    color(100, 20, 255))
+                assert.equal(
+                    toSass('rgb(100, 20, 255)', opt).toString(),
+                    color(100, 20, 255).toString())
             })
             it('should convert hex strings to colors', () => {
-                assert.deepEqual(
-                    toSass('#e77acc', opt),
-                    color(0xffe77acc))
+                assert.equal(
+                    toSass('#e77acc', opt).toString(),
+                    color(0xffe77acc).toString())
             })
             it('should convert number strings to numbers with units', () => {
                 assert.deepEqual(
