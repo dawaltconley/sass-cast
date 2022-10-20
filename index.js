@@ -144,6 +144,8 @@ const sassFunctions = {
      * $tw: require('./tailwind.config.js', $parseUnquotedStrings: true);
      * $tw-colors: map.get($tw, theme, extend, colors);
      * ```
+     * @name require
+     * @memberof sassFunctions
      * @param {SassString} $module - Path to the file or module. Relative paths are relative to the Node process running Sass compilation.
      * @param {SassList} [$properties=()] - List of properties, if you only want to parse part of the module data.
      * @param {SassBoolean} [$parseUnquotedStrings=false] - Passed as an option to {@link #tosass toSass}.

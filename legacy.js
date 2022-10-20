@@ -134,10 +134,15 @@ const fromSass = (object, options={}) => {
 
 /**
  * An object defining legacy Sass utility functions.
+ * @memberof legacy
+ * @see {@link sassFunctions}
  */
 const sassFunctions = {
     /**
      * Legacy Sass function for importing data from Javascript or JSON files.
+     * @memberof legacy.sassFunctions
+     * @alias require
+     * @see {@link require}
      */
     'require($module, $properties: (), $parseUnquotedStrings: false, $resolveFunctions: false, $quotes: false)': ($module, $properties, $parseUnquotedStrings, $resolveFunctions, $quotes) => {
         const moduleName = unquoteString($module.getValue());
