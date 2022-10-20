@@ -28,6 +28,12 @@ describe('legacy', () => {
             assert.deepEqual(toSass("'quoted string'"), string("'quoted string'"))
             assert.deepEqual(toSass('"quoted string"'), string('"quoted string"'))
         })
+        it('able to convert strings to unquoted strings', () => {
+            assert.deepEqual(toSass('foo', { quotes: null }), string('foo'))
+            assert.deepEqual(toSass('foo bar baz', { quotes: '' }), string('foo bar baz'))
+            assert.deepEqual(toSass("'quoted string'", { quotes: null }), string("'quoted string'"))
+            assert.deepEqual(toSass('"quoted string"', { quotes: ''}), string('"quoted string"'))
+        })
         it('should convert arrays to lists', () => {
             assert.equal(toSass([ 'foo', 4, false ]).dartValue.toString(), "'foo', 4, false")
             assert.equal(toSass([ 'single item' ]).dartValue.toString(), "('single item',)")

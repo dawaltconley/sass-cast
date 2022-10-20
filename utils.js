@@ -16,6 +16,7 @@ const isQuoted = str => /^['"].*['"]$/.test(str);
  * @return {string}
  */
 const quoteString = (str, q) => {
+    if (!q) return str;
     if (isQuoted(str)) {
         q = str[0];
         str = str.slice(1, -1);
