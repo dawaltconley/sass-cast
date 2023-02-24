@@ -80,6 +80,7 @@ Converts Sass values to their Javascript equivalents.
 
     *   `options.preserveUnits` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, only the values of numbers are returned, not their units. If true, `fromSass` will return numbers as a two-item Array, i.e. \[ value, unit ] (optional, default `false`)
     *   `options.rgbColors` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, colors are returned as strings. If true, `fromSass` will return colors as an object with `r`, `g`, `b`, and `a`, properties. (optional, default `false`)
+    *   `options.preserveQuotes` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, quoted Sass strings return their inner text as a string. If true, `fromSass` will preserve the quotes in the returned string value. (optional, default `false`)
 
 #### Examples
 
@@ -160,6 +161,7 @@ Converts legacy Sass objects to their Javascript equivalents.
 
     *   `options.preserveUnits` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, only the values of numbers are returned, not their units. If true, `fromSass` will return numbers as a two-item Array, i.e. \[ value, unit ] (optional, default `false`)
     *   `options.rgbColors` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, colors are returned as strings. If true, `fromSass` will return colors as an object with `r`, `g`, `b`, and `a`, properties. (optional, default `false`)
+    *   `options.preserveQuotes` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** By default, quoted Sass strings return their inner text as a string. If true, `fromSass` will preserve the quotes in the returned string value. (optional, default `false`)
 
 Returns **any** a Javascript value corresponding to the Sass input
 
