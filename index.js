@@ -83,13 +83,15 @@ const colorProperties = [ 'red', 'green', 'blue', 'hue', 'lightness', 'saturatio
  * @param {Object} options
  * @param {boolean} [options.preserveUnits=false] - By default, only the values of numbers are returned, not their units. If true, `fromSass` will return numbers as a two-item Array, i.e. [ value, unit ]
  * @param {boolean} [options.rgbColors=false] - By default, colors are returned as strings. If true, `fromSass` will return colors as an object with `r`, `g`, `b`, and `a`, properties.
+ * @param {boolean} [options.preserveQuotes=false] - By default, quoted Sass strings return their inner text as a string. If true, `fromSass` will preserve the quotes in the returned string value.
  * @return {*} - a Javascript value corresponding to the Sass input
  */
 
 const fromSass = (object, options={}) => {
     let {
         preserveUnits = false,
-        rgbColors = false
+        rgbColors = false,
+        preserveQuotes = false
     } = options;
     if (object instanceof sass.SassBoolean) {
         return object.value;
@@ -107,7 +109,7 @@ const fromSass = (object, options={}) => {
         }
         return object.toString();
     } else if (object instanceof sass.SassString) {
-        return unquoteString(object.text);
+        return preserveQuotes ? object.text : unquoteString(object.text);
     } else if (object instanceof sass.SassList || List.isList(object)) {
         let list = [];
         for (let i = 0, value = object.get(i); value !== undefined; i++, value = object.get(i)) {
