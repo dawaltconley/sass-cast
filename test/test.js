@@ -161,7 +161,7 @@ describe('fromSass', () => {
 
     describe('{ preserveUnits: true }', () => {
         let opt = { preserveUnits: true }
-        it('should return numbers with their units', () => {
+        it('should return numbers as an array of values and units', () => {
             assert.deepEqual(
                 fromSass(number(140, 'px'), opt),
                 [ 140, ['px'], [] ])
@@ -197,5 +197,32 @@ describe('fromSass', () => {
                 fromSass(color({ ...input, alpha: 0.2 }), opt),
                 { ...output, alpha: 0.2 })
         })
+    })
+})
+
+const assertEqual = (value, toOpt = {}, fromOpt = {}) =>
+    assert.equal(fromSass(toSass(value, toOpt), fromOpt), value)
+describe('converting to and from sass', () => {
+    it('should preserve null', () => {
+        assertEqual(null)
+    })
+    it('should preserve booleans', () => {
+        assertEqual(true)
+        assertEqual(false)
+    })
+    it('should preserve numbers', () => {
+        assertEqual(140)
+        assertEqual('140px', { parseUnquotedStrings: true })
+        assertEqual(140.0)
+        assertEqual(1.40)
+    })
+    it('should preserve strings', () => {
+        assertEqual('foo')
+        assertEqual('foo bar baz')
+        assertEqual("'quoted string'", {}, { preserveQuotes: true })
+        assertEqual('"quoted string"', {}, { preserveQuotes: true })
+    })
+    it('should preserve colors', () => {
+        assertEqual('rgb(100, 20, 255)', { parseUnquotedStrings: true })
     })
 })
