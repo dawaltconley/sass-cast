@@ -151,7 +151,7 @@ const sassFunctions = {
             properties = [ properties ];
         const parseUnquotedStrings = $parseUnquotedStrings.getValue();
         const resolveFunctions = $resolveFunctions.getValue();
-        const quotes = $quotes.getValue()
+        const quotes = $quotes.getValue();
         const options = {
             parseUnquotedStrings,
             resolveFunctions,
