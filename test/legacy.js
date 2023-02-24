@@ -119,7 +119,7 @@ describe('legacy', () => {
         })
         it('should convert numbers', () => {
             assert.equal(fromSass(number(140)), 140)
-            assert.equal(fromSass(number(140, 'px')), 140)
+            assert.equal(fromSass(number(140, 'px')), '140px')
             assert.equal(fromSass(number(140.0)), 140)
             assert.equal(fromSass(number(1.40)), 1.4)
         })

@@ -96,8 +96,11 @@ const fromSass = (object, options={}) => {
     } else if (object instanceof sass.types.Boolean) {
         return object.value;
     } else if (object instanceof sass.types.Number) {
+        const unit = object.getUnit();
         if (preserveUnits) {
-            return [ object.getValue(), object.getUnit() ];
+            return [ object.getValue(), unit ];
+        } else if (unit) {
+            return legacyToString(object);
         }
         return object.getValue();
     } else if (object instanceof sass.types.Color) {

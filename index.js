@@ -98,6 +98,8 @@ const fromSass = (object, options={}) => {
     } else if (object instanceof sass.SassNumber) {
         if (preserveUnits) {
             return [ object.value, object.numeratorUnits.toArray(), object.denominatorUnits.toArray() ];
+        } else if (object.numeratorUnits.size || object.denominatorUnits.size) {
+            return object.toString();
         }
         return object.value;
     } else if (object instanceof sass.SassColor) {
