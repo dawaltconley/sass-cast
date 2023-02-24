@@ -88,14 +88,16 @@ const colorProperties = [ 'red', 'green', 'blue', 'hue', 'lightness', 'saturatio
 
 const fromSass = (object, options={}) => {
     let {
-        preserveUnits = false,
+        parseUnits = false,
         rgbColors = false
     } = options;
     if (object instanceof sass.SassBoolean) {
         return object.value;
     } else if (object instanceof sass.SassNumber) {
-        if (preserveUnits) {
+        if (parseUnits) {
             return [ object.value, object.numeratorUnits.toArray(), object.denominatorUnits.toArray() ];
+        } else if (object.numeratorUnits.size || object.denominatorUnits.size) {
+            return object.toString();
         }
         return object.value;
     } else if (object instanceof sass.SassColor) {
