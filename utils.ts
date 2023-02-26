@@ -106,7 +106,7 @@ const legacyToString = (obj: LegacyValue): string =>
  * @param {Object|Array} obj
  * @param {*[]} attrs
  */
-const getAttr = (obj: object | any[], attrs: string[]) =>
+const getAttr = (obj: object | any[], attrs: (string | number)[]): any =>
   attrs.reduce((o, attr) => o[attr], obj)
 
 export {
