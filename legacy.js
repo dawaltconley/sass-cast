@@ -42,8 +42,6 @@ const toSass = (value, options={}) => {
         if (parseUnquotedStrings && !isQuoted(value)) {
             let parsed = parseStringLegacy(value);
             if (parsed instanceof sass.types.Color || parsed instanceof sass.types.Number) {
-                if (parsed.dartValue && parsed.dartValue.originalSpan)
-                    parsed.dartValue.originalSpan = null;
                 return parsed;
             }
         }
