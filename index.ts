@@ -1,12 +1,12 @@
 import sass, {
   Value,
-  LegacyValue,
   SassMap,
   SassList,
   SassColor,
   SassNumber,
   SassString,
   SassBoolean,
+  CustomFunction,
 } from 'sass'
 import { List, OrderedMap } from 'immutable'
 // import * as sass from 'sass'
@@ -39,55 +39,27 @@ import { isQuoted, unquoteString, parseString, getAttr } from './utils'
  * @return {Value} - a {@link https://sass-lang.com/documentation/js-api/classes/Value Sass value}
  */
 
+type Sass<Input extends any> = Input extends boolean
+  ? SassBoolean
+  : Input extends number
+  ? SassNumber
+  : Input extends string
+  ? SassString
+  : Input extends any[]
+  ? SassList
+  : Input extends object
+  ? SassMap
+  : Value
+
+type ParseString<Input extends Value> = Input extends SassString
+  ? SassString | SassColor | SassNumber
+  : Input
+
 interface ToSassOptions {
   parseUnquotedStrings?: boolean
   resolveFunctions?: boolean | any[]
 }
 
-// type ConvertedToSass<Input> = Input extends null | undefined
-//   ? typeof sassNull
-//   : Input extends boolean
-//   ? SassBoolean
-//   : Input extends number
-//   ? SassNumber
-//   : Input extends string
-//   ? SassString | SassColor | SassNumber
-//   : Input extends any[]
-//   ? SassList
-//   : Input extends object
-//   ? SassMap
-//   : never
-//
-// const toSass = <T extends any>(
-//   value: T,
-//   options: {
-//     parseUnquotedStrings?: boolean
-//     resolveFunctions?: boolean
-//   } = {}
-// ): ConvertedToSass<T> => {
-// const toSass = (value: null | undefined, options: ToSassOptions = {}): typeof sassNull
-
-// type SassValue =
-//   | Value
-//   | typeof sassNull
-//   | SassBoolean
-//   | SassNumber
-//   | SassString
-//   | SassColor
-//   | SassList
-//   | SassMap
-//
-// let value = 'foo' as unknown as Value
-// let test: SassValue = value
-
-// type ToSass = {
-//   (v: null | undefined, o: ToSassOptions): typeof sassNull
-//   (value: boolean, options: ToSassOptions): SassBoolean
-//   // (v: number): SassNumber
-//   (value: any, options: ToSassOptions): SassValue
-// }
-
-// function toSass(v: null | undefined, o?: ToSassOptions): typeof sassNull
 function toSass(v: boolean, o?: ToSassOptions): SassBoolean
 function toSass(v: number, o?: ToSassOptions): SassNumber
 function toSass(
@@ -96,18 +68,27 @@ function toSass(
 ): SassString | SassNumber | SassColor
 function toSass(v: string, o?: ToSassOptions): SassString
 function toSass(v: any[], o?: ToSassOptions): SassList
-// function toSass<F extends (...args: any) => any>(
-//   v: F,
-//   o?: ToSassOptions & { resolveFunctions: true | any[] }
-// ): typeof toSass(v: ReturnType<F>, o?: ToSassOptions)
+function toSass<F extends (...args: any) => any>(
+  v: F,
+  o?: ToSassOptions & {
+    resolveFunctions: true | any[]
+    parseUnquotedStrings: true
+  }
+): ParseString<Sass<ReturnType<F>>>
+function toSass<F extends (...args: any) => any>(
+  v: F,
+  o?: ToSassOptions & { resolveFunctions: true | any[] }
+): Sass<ReturnType<F>>
 function toSass(v: object, o?: ToSassOptions): SassMap
 function toSass(value: any, options: ToSassOptions = {}): Value {
   let { parseUnquotedStrings = false, resolveFunctions = false } = options
   if (value instanceof Value) {
     return value
   } else if (value === null || value === undefined) {
+    console.log(value)
     return sass.sassNull
   } else if (typeof value === 'boolean') {
+    console.log(value)
     return value ? sass.sassTrue : sass.sassFalse
   } else if (typeof value === 'number') {
     return new SassNumber(value)
@@ -136,10 +117,6 @@ function toSass(value: any, options: ToSassOptions = {}): Value {
   return sass.sassNull
 }
 
-let foo = toSass(() => 490, { resolveFunctions: true })
-// let v = foo instanceof Value
-console.log(foo)
-
 const colorProperties = [
   'red',
   'green',
@@ -150,7 +127,9 @@ const colorProperties = [
   'whiteness',
   'blackness',
   'alpha',
-]
+] as const
+
+type ColorProperties = (typeof colorProperties)[number]
 
 /**
  * Converts Sass values to their Javascript equivalents.
@@ -170,7 +149,34 @@ const colorProperties = [
  * @return {*} - a Javascript value corresponding to the Sass input
  */
 
-const fromSass = (object, options = {}) => {
+interface FromSassOptions {
+  preserveUnits?: boolean
+  preserveQuotes?: boolean
+  rgbColors?: boolean
+}
+
+type NumberWithUnits = [number, string[], string[]]
+type ColorObject = Record<ColorProperties, number>
+
+function fromSass(v: SassBoolean, o?: FromSassOptions): boolean
+function fromSass(
+  v: SassNumber,
+  o?: FromSassOptions & { preserveUnits: true }
+): NumberWithUnits
+function fromSass(v: SassNumber, o?: FromSassOptions): number | string
+function fromSass(
+  v: SassColor,
+  o?: FromSassOptions & { rgbColors: true }
+): ColorObject
+function fromSass(v: SassColor, o?: FromSassOptions): string
+function fromSass(v: SassString, o?: FromSassOptions): string
+function fromSass(v: SassList | List<Value>, o?: FromSassOptions): any[]
+function fromSass(v: SassMap, o?: FromSassOptions): object
+function fromSass(v: Value, o?: FromSassOptions): null | typeof v
+function fromSass(
+  object: Value | List<Value>,
+  options: FromSassOptions = {}
+): any {
   let {
     preserveUnits = false,
     rgbColors = false,
@@ -200,7 +206,7 @@ const fromSass = (object, options = {}) => {
   } else if (object instanceof sass.SassString) {
     return preserveQuotes ? object.text : unquoteString(object.text)
   } else if (object instanceof sass.SassList || List.isList(object)) {
-    let list = []
+    let list: any[] = []
     for (
       let i = 0, value = object.get(i);
       value !== undefined;
@@ -211,7 +217,10 @@ const fromSass = (object, options = {}) => {
     return list
   } else if (object instanceof sass.SassMap) {
     return object.contents
-      .mapEntries(([k, v]) => [k.text, fromSass(v, options)])
+      .mapEntries(([k, v]) => [
+        k instanceof SassString ? k.text : k.toString(),
+        fromSass(v, options),
+      ])
       .toObject()
   } else {
     return object.realNull
@@ -227,7 +236,7 @@ const fromSass = (object, options = {}) => {
  *
  * sass.compile('main.scss', { functions: sassFunctions });
  */
-const sassFunctions = {
+const sassFunctions: { [fn: string]: CustomFunction<'async'> } = {
   /**
    * Sass function for importing data from Javascript or JSON files.
    * Calls the CommonJS `require` function under the hood.
@@ -241,11 +250,11 @@ const sassFunctions = {
    * ```
    * @name require
    * @memberof sassFunctions
-   * @param {SassString} $module - Path to the file or module. Relative paths are relative to the Node process running Sass compilation.
-   * @param {SassList} [$properties=()] - List of properties, if you only want to parse part of the module data.
-   * @param {SassBoolean} [$parseUnquotedStrings=false] - Passed as an option to {@link #tosass toSass}.
-   * @param {SassBoolean} [$resolveFunctions=false] - Passed as an option to {@link #tosass toSass}.
-   * @return {Value} - a {@link https://sass-lang.com/documentation/js-api/classes/Value Sass value}
+   * @param  $module - Path to the file or module. Relative paths are relative to the Node process running Sass compilation.
+   * @param  [$properties=()] - List of properties, if you only want to parse part of the module data.
+   * @param  [$parseUnquotedStrings=false] - Passed as an option to {@link #tosass toSass}.
+   * @param  [$resolveFunctions=false] - Passed as an option to {@link #tosass toSass}.
+   * @return - a {@link https://sass-lang.com/documentation/js-api/classes/Value Sass value}
    */
   'require($module, $properties: (), $parseUnquotedStrings: false, $resolveFunctions: false)':
     args => {
@@ -253,14 +262,14 @@ const sassFunctions = {
       const properties = args[1].realNull && fromSass(args[1].asList)
       const parseUnquotedStrings = args[2].isTruthy
       const resolveFunctions = args[3].isTruthy
-      const options = {
+      const options: ToSassOptions = {
         parseUnquotedStrings,
         resolveFunctions,
       }
-      const convert = data =>
+      const convert = (data: object | any[]) =>
         toSass(properties ? getAttr(data, properties) : data, options)
 
-      let mod,
+      let mod: any,
         paths = [moduleName, `${process.cwd()}/${moduleName}`]
       for (let path of paths) {
         try {
