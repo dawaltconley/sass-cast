@@ -149,7 +149,7 @@ const sassFunctions = {
      * @alias require
      * @see {@link require}
      */
-    'require($module, $properties: (), $parseUnquotedStrings: false, $resolveFunctions: false, $quotes: false)': ($module, $properties, $parseUnquotedStrings, $resolveFunctions, $quotes) => {
+    'require($module, $properties: (), $parseUnquotedStrings: false, $resolveFunctions: false, $quotes: false)': ($module, $properties, $parseUnquotedStrings, $resolveFunctions, $quotes, done) => {
         const moduleName = unquoteString($module.getValue());
         let properties = fromSass($properties);
         if (properties && !Array.isArray(properties))
@@ -182,9 +182,10 @@ const sassFunctions = {
 
         if (resolveFunctions && typeof mod === 'function')
             mod = mod();
-        if (mod instanceof Promise)
-            return mod.then(convert);
-        return convert(mod);
+        if (done && mod instanceof Promise)
+            mod.then(data => done(convert(data)));
+        else
+            return convert(mod);
     },
 };
 
