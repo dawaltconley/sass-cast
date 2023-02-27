@@ -2,6 +2,6 @@ extends: '../.eslintrc.yml'
 env:
   es6: false
   es2022: true
-  mocha: true
+  jest: true
 rules:
   semi: [ warn, never ]
