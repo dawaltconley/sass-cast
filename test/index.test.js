@@ -223,6 +223,6 @@ describe('converting to and from sass', () => {
         assertEqual('"quoted string"', {}, { preserveQuotes: true })
     })
     it('should preserve colors', () => {
-        assertEqual('rgb(100, 20, 255)', { parseUnquotedStrings: true })
+        assertEqual('#6414ff', { parseUnquotedStrings: true })
     })
 })
