@@ -184,3 +184,4 @@ Legacy Sass function for importing data from Javascript or JSON files.
 *   `$parseUnquotedStrings`  
 *   `$resolveFunctions`  
 *   `$quotes`  
+*   `done`  
