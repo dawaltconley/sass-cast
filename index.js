@@ -159,16 +159,19 @@ const sassFunctions = {
      * @param {SassList} [$properties=()] - List of properties, if you only want to parse part of the module data.
      * @param {SassBoolean} [$parseUnquotedStrings=false] - Passed as an option to {@link #tosass toSass}.
      * @param {SassBoolean} [$resolveFunctions=false] - Passed as an option to {@link #tosass toSass}.
+     * @param {SassBoolean} [$quotes=true] - Passed as an option to {@link #tosass toSass}.
      * @return {Value} - a {@link https://sass-lang.com/documentation/js-api/classes/Value Sass value} 
      */
-    'require($module, $properties: (), $parseUnquotedStrings: false, $resolveFunctions: false)': args => {
+    'require($module, $properties: (), $parseUnquotedStrings: false, $resolveFunctions: false, $quotes: true)': args => {
         const moduleName = args[0].assertString('module').text;
         const properties = args[1].realNull && fromSass(args[1].asList);
         const parseUnquotedStrings = args[2].isTruthy;
         const resolveFunctions = args[3].isTruthy;
+        const quotes = args[4].isTruthy;
         const options = {
             parseUnquotedStrings,
-            resolveFunctions
+            resolveFunctions,
+            quotes
         };
         const convert = data => toSass(
             properties ? getAttr(data, properties) : data,

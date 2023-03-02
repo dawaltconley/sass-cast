@@ -129,6 +129,7 @@ $tw-colors: map.get($tw, theme, extend, colors);
 *   `$properties` **SassList** List of properties, if you only want to parse part of the module data. (optional, default `()`)
 *   `$parseUnquotedStrings` **SassBoolean** Passed as an option to [toSass](#tosass). (optional, default `false`)
 *   `$resolveFunctions` **SassBoolean** Passed as an option to [toSass](#tosass). (optional, default `false`)
+*   `$quotes` **SassBoolean** controls whether returned SassStrings are quoted. input strings that contain quotes will always return a quoted SassString even if this flag is false. (optional, default `true`)
 
 Returns **Value** a [Sass value](https://sass-lang.com/documentation/js-api/classes/Value)
 
