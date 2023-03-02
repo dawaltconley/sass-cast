@@ -1,5 +1,7 @@
+delete require.cache
 const { toSass, fromSass } = require('../legacy')
 const { types, ...sass } = require('sass')
+const assert = require('assert').strict
 
 const number = (...args) => new types.Number(...args)
 const string = (...args) => new types.String(...args)
@@ -8,170 +10,187 @@ const color = (...args) => new types.Color(...args)
 describe('legacy', () => {
     describe('toSass', () => {
         it('should convert null and undefined', () => {
-            expect(toSass(null)).toStrictEqual(sass.NULL)
-            expect(toSass(undefined)).toStrictEqual(sass.NULL)
+            assert.deepEqual(toSass(null), sass.NULL)
+            assert.deepEqual(toSass(undefined), sass.NULL)
         })
         it('should convert booleans', () => {
-            expect(toSass(true)).toStrictEqual(sass.TRUE)
-            expect(toSass(false)).toStrictEqual(sass.FALSE)
+            assert.deepEqual(toSass(true), sass.TRUE)
+            assert.deepEqual(toSass(false), sass.FALSE)
         })
         it('should convert numbers', () => {
-            expect(toSass(140)).toStrictEqual(number(140))
-            expect(toSass(140.0)).toStrictEqual(number(140))
-            expect(toSass(1.40)).toStrictEqual(number(1.4))
+            assert.deepEqual(toSass(140), number(140))
+            assert.deepEqual(toSass(140.0), number(140))
+            assert.deepEqual(toSass(1.40), number(1.4))
         })
         it('should convert strings to quoted strings', () => {
-            expect(toSass('foo')).toStrictEqual(string("'foo'"))
-            expect(toSass('foo bar baz')).toStrictEqual(string("'foo bar baz'"))
-            expect(toSass("'quoted string'")).toStrictEqual(string("'quoted string'"))
-            expect(toSass('"quoted string"')).toStrictEqual(string('"quoted string"'))
+            assert.deepEqual(toSass('foo'), string("'foo'"))
+            assert.deepEqual(toSass('foo bar baz'), string("'foo bar baz'"))
+            assert.deepEqual(toSass("'quoted string'"), string("'quoted string'"))
+            assert.deepEqual(toSass('"quoted string"'), string('"quoted string"'))
         })
         it('able to convert strings to unquoted strings', () => {
-            expect(toSass('foo', { quotes: null })).toStrictEqual(string('foo'))
-            expect(toSass('foo bar baz', { quotes: '' })).toStrictEqual(string('foo bar baz'))
-            expect(toSass("'quoted string'", { quotes: null })).toStrictEqual(string("'quoted string'"))
-            expect(toSass('"quoted string"', { quotes: ''})).toStrictEqual(string('"quoted string"'))
+            assert.deepEqual(toSass('foo', { quotes: null }), string('foo'))
+            assert.deepEqual(toSass('foo bar baz', { quotes: '' }), string('foo bar baz'))
+            assert.deepEqual(toSass("'quoted string'", { quotes: null }), string("'quoted string'"))
+            assert.deepEqual(toSass('"quoted string"', { quotes: ''}), string('"quoted string"'))
         })
         it('should convert arrays to lists', () => {
-            expect(toSass([ 'foo', 4, false ]).dartValue.toString()).toBe("'foo', 4, false")
-            expect(toSass([ 'single item' ]).dartValue.toString()).toBe("('single item',)")
+            assert.equal(toSass([ 'foo', 4, false ]).dartValue.toString(), "'foo', 4, false")
+            assert.equal(toSass([ 'single item' ]).dartValue.toString(), "('single item',)")
         })
         it('should convert objects to maps', () => {
-            expect(toSass({ foo: 'bar', baz: 4, 'lkjs:gs//': null }).dartValue.toString())
-                .toBe("('foo': 'bar', 'baz': 4, 'lkjs:gs//': null)")
-            expect(toSass({ 0: 'first', 1: 'last' }).dartValue.toString())
-                .toBe("('0': 'first', '1': 'last')")
-            expect(toSass({ 'single': "item" }).dartValue.toString())
-                .toBe("('single': 'item')")
+            assert.equal(
+                toSass({ foo: 'bar', baz: 4, 'lkjs:gs//': null }).dartValue.toString(),
+                "('foo': 'bar', 'baz': 4, 'lkjs:gs//': null)")
+            assert.equal(
+                toSass({ 0: 'first', 1: 'last' }).dartValue.toString(),
+                "('0': 'first', '1': 'last')")
+            assert.equal(
+                toSass({ 'single': "item" }).dartValue.toString(),
+                "('single': 'item')")
         })
         it('should recursively convert arrays of arrays', () => {
-            expect(toSass([ [ 2, 'foo' ], [ null ], [ 'foo', 'bar', 'baz' ] ]).dartValue.toString())
-                .toBe("(2, 'foo'), (null,), ('foo', 'bar', 'baz')")
+            assert.equal(
+                toSass([ [ 2, 'foo' ], [ null ], [ 'foo', 'bar', 'baz' ] ]).dartValue.toString(),
+                "(2, 'foo'), (null,), ('foo', 'bar', 'baz')")
         })
         it('should recursively convert arrays of objects', () => {
-            expect(toSass([ { foo: 'bar' }, { baz: null, 4: 'lkj' } ]).dartValue.toString())
-                .toBe("('foo': 'bar'), ('4': 'lkj', 'baz': null)")
+            assert.equal(
+                toSass([ { foo: 'bar' }, { baz: null, 4: 'lkj' } ]).dartValue.toString(),
+                "('foo': 'bar'), ('4': 'lkj', 'baz': null)")
         })
         it('should recursively convert objects with array values', () => {
-            expect(toSass({ foo: [ 'bar', 'baz' ], bar: [ true, false ] }).dartValue.toString())
-                .toBe("('foo': ('bar', 'baz'), 'bar': (true, false))")
+            assert.equal(
+                toSass({ foo: [ 'bar', 'baz' ], bar: [ true, false ] }).dartValue.toString(),
+                "('foo': ('bar', 'baz'), 'bar': (true, false))")
         })
         it('should recursively convert objects with objects as values', () => {
-            expect(toSass({ "nested object": { key: 'val', true: false } }).dartValue.toString())
-                .toBe("('nested object': ('key': 'val', 'true': false))")
+            assert.equal(
+                toSass({ "nested object": { key: 'val', true: false } }).dartValue.toString(),
+                "('nested object': ('key': 'val', 'true': false))")
         })
         it('should return null for a function', () => {
-            expect(toSass(() => 'foo')).toStrictEqual(sass.NULL)
+            assert.equal(toSass(() => 'foo'), sass.NULL)
         })
 
         describe('{ parseUnquotedStrings: true }', () => {
             let opt = { parseUnquotedStrings: true }
             it('should convert rgb strings to colors', () => {
-                expect(toSass('rgb(100, 20, 255)', opt).toString())
-                    .toStrictEqual(color(100, 20, 255).toString())
+                assert.equal(
+                    toSass('rgb(100, 20, 255)', opt).toString(),
+                    color(100, 20, 255).toString())
             })
             it('should convert hex strings to colors', () => {
-                expect(toSass('#e77acc', opt).toString())
-                    .toStrictEqual(color(0xffe77acc).toString())
+                assert.equal(
+                    toSass('#e77acc', opt).toString(),
+                    color(0xffe77acc).toString())
             })
             it('should convert number strings to numbers with units', () => {
-                expect(toSass('140px', opt))
-                    .toStrictEqual(number(140, 'px'))
-                expect(toSass('0.45%', opt))
-                    .toStrictEqual(number(0.45, '%'))
+                assert.deepEqual(
+                    toSass('140px', opt),
+                    number(140, 'px'))
+                assert.deepEqual(
+                    toSass('0.45%', opt),
+                    number(0.45, '%'))
             })
         })
 
         describe('{ resolveFunctions: true }', () => {
             it('should convert the result of a function', () => {
                 const opt = { resolveFunctions: true }
-                expect(toSass(() => 4, opt)).toStrictEqual(number(4))
-                expect(toSass(() => 'foo', opt)).toStrictEqual(string("'foo'"))
+                assert.deepEqual(toSass(() => 4, opt), number(4))
+                assert.deepEqual(toSass(() => 'foo', opt), string("'foo'"))
             })
             it('should convert the result of a function using arguments', () => {
                 const plus = (a, b) => a + b
-                expect(toSass(plus, { resolveFunctions: [5, 7] })).toStrictEqual(number(12))
-                expect(toSass(plus, { resolveFunctions: ['foo', 'bar'] })).toStrictEqual(string("'foobar'"))
+                assert.deepEqual(toSass(plus, { resolveFunctions: [5, 7] }), number(12))
+                assert.deepEqual(toSass(plus, { resolveFunctions: ['foo', 'bar'] }), string("'foobar'"))
             })
         })
     })
 
     describe('fromSass', () => {
         it('should convert null', () => {
-            expect(fromSass(sass.NULL)).toBe(null)
+            assert.equal(fromSass(sass.NULL), null)
         })
         it('should convert booleans', () => {
-            expect(fromSass(sass.TRUE)).toBe(true)
-            expect(fromSass(sass.FALSE)).toBe(false)
+            assert.equal(fromSass(sass.TRUE), true)
+            assert.equal(fromSass(sass.FALSE), false)
         })
         it('should convert numbers', () => {
-            expect(fromSass(number(140))).toBe(140)
-            expect(fromSass(number(140, 'px'))).toBe('140px')
-            expect(fromSass(number(140.0))).toBe(140)
-            expect(fromSass(number(1.40))).toBe(1.4)
+            assert.equal(fromSass(number(140)), 140)
+            assert.equal(fromSass(number(140, 'px')), '140px')
+            assert.equal(fromSass(number(140.0)), 140)
+            assert.equal(fromSass(number(1.40)), 1.4)
         })
         it('should convert strings', () => {
-            expect(fromSass(string('foo'))).toBe('foo')
-            expect(fromSass(string('foo bar baz'))).toBe('foo bar baz')
-            expect(fromSass(string("'quoted string'"))).toBe('quoted string')
-            expect(fromSass(string('"quoted string"'))).toBe('quoted string')
+            assert.equal(fromSass(string('foo')), 'foo')
+            assert.equal(fromSass(string('foo bar baz')), 'foo bar baz')
+            assert.equal(fromSass(string("'quoted string'")), 'quoted string')
+            assert.equal(fromSass(string('"quoted string"')), 'quoted string')
         })
         it('should convert lists to arrays', () => {
-            expect(fromSass(toSass([ 'foo', 4, false ]))).toStrictEqual([ 'foo', 4, false ])
-            expect(fromSass(toSass([ 'single item' ]))).toStrictEqual([ 'single item' ])
+            assert.deepEqual(fromSass(toSass([ 'foo', 4, false ])), [ 'foo', 4, false ])
+            assert.deepEqual(fromSass(toSass([ 'single item' ])), [ 'single item' ])
         })
         it('should convert maps to objects', () => {
             let o = { foo: 'bar', baz: 4, 'lkjs:gs//': null }
-            expect(fromSass(toSass(o))).toStrictEqual(o)
+            assert.deepEqual(fromSass(toSass(o)), o)
             o = { 0: 'first', 1: 'last' }
-            expect(fromSass(toSass(o))).toStrictEqual(o)
+            assert.deepEqual(fromSass(toSass(o)), o)
             o = { 'single': "item" }
-            expect(fromSass(toSass(o))).toStrictEqual(o)
+            assert.deepEqual(fromSass(toSass(o)), o)
         })
         it('should recursively convert lists of lists', () => {
             let a = [ [ 2, 'foo' ], [ null ], [ 'foo', 'bar', 'baz' ] ]
-            expect(fromSass(toSass(a))).toStrictEqual(a)
+            assert.deepEqual(fromSass(toSass(a)), a)
         })
         it('should recursively convert lists of maps', () => {
             let a = [ { foo: 'bar' }, { baz: null, 4: 'lkj' } ]
-            expect(fromSass(toSass(a))).toStrictEqual(a)
+            assert.deepEqual(fromSass(toSass(a)), a)
         })
         it('should recursively convert maps with list values', () => {
             let o = { foo: [ 'bar', 'baz' ], bar: [ true, false ] }
-            expect(fromSass(toSass(o))).toStrictEqual(o)
+            assert.deepEqual(fromSass(toSass(o)), o)
         })
         it('should recursively convert maps with maps as values', () => {
             let o = { "nested map": { key: 'val', true: false } }
-            expect(fromSass(toSass(o))).toStrictEqual(o)
+            assert.deepEqual(fromSass(toSass(o)), o)
         })
 
         describe('{ preserveUnits: true }', () => {
             let opt = { preserveUnits: true }
             it('should return numbers as an array of values and units', () => {
-                expect(fromSass(number(140, 'px'), opt))
-                    .toStrictEqual([ 140, 'px' ])
-                expect(fromSass(number(140), opt))
-                    .toStrictEqual([ 140, '' ])
-                expect(fromSass(number(1.40, 'em'), opt))
-                    .toStrictEqual([ 1.4, 'em' ])
+                assert.deepEqual(
+                    fromSass(number(140, 'px'), opt),
+                    [ 140, 'px' ])
+                assert.deepEqual(
+                    fromSass(number(140), opt),
+                    [ 140, '' ])
+                assert.deepEqual(
+                    fromSass(number(1.40, 'em'), opt),
+                    [ 1.4, 'em' ])
             })
         })
         describe('{ rgbColors: true }', () => {
             let opt = { rgbColors: true }
             it('should return colors as rbga objects', () => {
-                expect(fromSass(color(240, 33, 109), opt))
-                    .toStrictEqual({ r: 240, g: 33, b: 109, a: 1 })
-                expect(fromSass(color(240, 33, 109, 0.2), opt))
-                    .toStrictEqual({ r: 240, g: 33, b: 109, a: 0.2 })
-                expect(fromSass(color(0xafe77acc), opt))
-                    .toStrictEqual({ r: 231, g: 122, b: 204, a: 0.6862745098039216 })
+                assert.deepEqual(
+                    fromSass(color(240, 33, 109), opt),
+                    { r: 240, g: 33, b: 109, a: 1 })
+                assert.deepEqual(
+                    fromSass(color(240, 33, 109, 0.2), opt),
+                    { r: 240, g: 33, b: 109, a: 0.2 })
+                assert.deepEqual(
+                    fromSass(color(0xafe77acc), opt),
+                    { r: 231, g: 122, b: 204, a: 0.6862745098039216 })
             })
         })
     })
 })
 
 const assertEqual = (value, toOpt = {}, fromOpt = {}) =>
-    expect(fromSass(toSass(value, toOpt), fromOpt)).toBe(value)
+    assert.equal(fromSass(toSass(value, toOpt), fromOpt), value)
 describe('converting to and from sass', () => {
     it('should preserve null', () => {
         assertEqual(null)
