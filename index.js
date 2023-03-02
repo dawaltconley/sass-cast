@@ -26,7 +26,7 @@ const sass = require('sass');
  * @param {Object} options
  * @param {boolean} [options.parseUnquotedStrings=false] - whether to parse unquoted strings for colors or numbers with units
  * @param {boolean|*[]} [options.resolveFunctions=false] - if true, resolve functions and attempt to cast their return values. if an array, pass as arguments when resolving
- * @param {boolean|undefined} [options.quotes] - controls whether returned SassStrings are quoted. input strings that contain quotes will always return a quoted SassString regardless of this flag.
+ * @param {boolean} [options.quotes=true] - controls whether returned SassStrings are quoted. input strings that contain quotes will always return a quoted SassString even if this flag is false.
  * @return {Value} - a {@link https://sass-lang.com/documentation/js-api/classes/Value Sass value} 
  */
 
@@ -34,7 +34,7 @@ const toSass = (value, options={}) => {
     let {
         parseUnquotedStrings = false,
         resolveFunctions = false,
-        quotes,
+        quotes = true,
     } = options;
     if (value instanceof sass.Value) {
         return value;
