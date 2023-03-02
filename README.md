@@ -1,13 +1,8 @@
 # sass-cast
 
-Convert Javascript objects to Sass objects and vice versa.
-
-This module uses Sass's Javascript API to handle conversions.
-This is slower than regex or JS-native parsing methods like the
-[node-sass-utils](https://www.npmjs.com/package/node-sass-utils) `castToSass()` method
-or [json2scss-map](https://www.npmjs.com/package/json2scss-map).
-But it is more-or-less guaranteed to be accurate, since the majority of
-the conversion is handled by Sass itself.
+Convert Javascript objects to Sass objects and vice versa. Based on `sassport` 
+and `node-sass-utils`, updated to work with newer sass versions and the [modern 
+Sass API](https://sasscss.org/blog/new-js-api-release-candidate).
 
 ## Usage
 
