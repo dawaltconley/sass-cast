@@ -60,7 +60,7 @@ const toSass = (value, options={}) => {
             return new sass.SassList(sassList);
         } else {
             let sassMap = OrderedMap(value).mapEntries(([ key, value ]) => [
-                new sass.SassString(key),
+                new sass.SassString(key, { quotes: true }),
                 toSass(value, options)
             ]);
             return new sass.SassMap(sassMap);
