@@ -1,4 +1,4 @@
-jest.mock('sass', () => {
-    const alias = process.env.SASS_ALIAS || 'sass'
-    return jest.requireActual(alias)
-})
+const mock = require('mock-require')
+const sassAlias = process.env.SASS_ALIAS || 'sass'
+if (sassAlias !== 'sass')
+    mock('sass', sassAlias)
