@@ -49,6 +49,7 @@ as well as the array or object itself.
 
     *   `options.parseUnquotedStrings` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** whether to parse unquoted strings for colors or numbers with units (optional, default `false`)
     *   `options.resolveFunctions` **([boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)\<any>)** if true, resolve functions and attempt to cast their return values. if an array, pass as arguments when resolving (optional, default `false`)
+    *   `options.quotes` **([boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))?** controls whether returned SassStrings are quoted. input strings that contain quotes will always return a quoted SassString regardless of this flag.
 
 #### Examples
 
