@@ -3,7 +3,7 @@ const fs = require('fs')
 const sass = require('sass')
 const assert = require('assert').strict
 
-describe('require', () => {
+describe('legacy require', () => {
     it('should import synchronous javascript data', () => {
         const { css: output } = sass.renderSync({ file: './test/require.scss', functions })
         const expected = fs.readFileSync('./test/css/require.css')
