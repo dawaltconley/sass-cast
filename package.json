@@ -43,5 +43,8 @@
   "bugs": {
     "url": "https://github.com/dawaltconley/sass-cast/issues"
   },
-  "homepage": "https://github.com/dawaltconley/sass-cast#readme"
+  "homepage": "https://github.com/dawaltconley/sass-cast#readme",
+  "peerDependencies": {
+    "sass": "^1.45.2"
+  }
 }
