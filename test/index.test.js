@@ -106,6 +106,20 @@ if (sass.compile) {
                 assert.deepEqual(toSass(plus, { resolveFunctions: ['foo', 'bar'] }), string('foobar'))
             })
         })
+
+        describe('{ quotes: false }', () => {
+            const opt = { quotes: false }
+            it('should return unquoted strings', () => {
+                assert.deepEqual(toSass('unquoted string', opt), string('unquoted string', { quotes: false }))
+                assert.equal(toSass([ 'foo', 4, false ], opt).toString(), 'foo, 4, false')
+                assert.equal(toSass({ foo: 'bar', baz: 4, 'lkjs:gs//': null }, opt).toString(),
+                    `("foo": bar, "baz": 4, "lkjs:gs//": null)`)
+            })
+            it('should still retrun explicitely quoted strings', () => {
+                assert.deepEqual(toSass("'quoted string'", opt), string("'quoted string'"))
+                assert.deepEqual(toSass('"quoted string"', opt), string('"quoted string"'))
+            })
+        })
     })
 
     describe('fromSass', () => {
