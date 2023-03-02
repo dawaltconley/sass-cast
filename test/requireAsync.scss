@@ -1,10 +1,10 @@
 @use 'sass:map';
 @use 'sass:string';
 
-$place: require('./test/data/async.js', $resolveFunctions: true);
+$place: require('./test/data/async.js', $quotes: false, $resolveFunctions: true);
 .splash-async {
     $bg: map.get($place, image);
-    background-image: url(string.unquote($bg));
+    background-image: url($bg);
 }
 
 .splash-async-2 {

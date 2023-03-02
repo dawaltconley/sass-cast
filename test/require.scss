@@ -47,6 +47,6 @@ $place: require('./test/data/sync', $resolveFunctions: true);
 
 // Requiring a property returned by a function
 .splash-2 {
-    $bg: require('./test/data/sync', (image,), $resolveFunctions: true);
-    background-image: url(string.unquote($bg));
+    $bg: require('./test/data/sync', (image,), $resolveFunctions: true, $quotes: false);
+    background-image: url($bg);
 }
