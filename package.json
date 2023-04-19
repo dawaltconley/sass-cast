@@ -45,6 +45,7 @@
   },
   "homepage": "https://github.com/dawaltconley/sass-cast#readme",
   "peerDependencies": {
-    "sass": "^1.45.2"
+    "sass": "^1.45.2",
+    "immutable": ">=4.0.0"
   }
 }
