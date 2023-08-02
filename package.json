@@ -32,7 +32,7 @@
     "eslint": "^8.4.1",
     "mocha": "^10.2.0",
     "mock-require": "^3.0.3",
-    "sass": "^1.58.3",
+    "sass": "^1.72.0",
     "sass-1.36": "npm:sass@1.36",
     "sass-1.45": "npm:sass@1.45"
   },
@@ -45,7 +45,7 @@
   },
   "homepage": "https://github.com/dawaltconley/sass-cast#readme",
   "peerDependencies": {
-    "sass": "^1.45.2",
-    "immutable": ">=4.0.0"
+    "immutable": ">=4.0.0",
+    "sass": "^1.45.2"
   }
 }
