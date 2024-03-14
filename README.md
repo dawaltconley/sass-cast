@@ -1,7 +1,7 @@
 # sass-cast
 
-Convert Javascript objects to Sass objects and vice versa. Based on `sassport` 
-and `node-sass-utils`, updated to work with newer sass versions and the [modern 
+Convert Javascript objects to Sass objects and vice versa. Based on `sassport`
+and `node-sass-utils`, updated to work with newer sass versions and the [modern
 Sass API](https://sasscss.org/blog/new-js-api-release-candidate).
 
 ## Usage
