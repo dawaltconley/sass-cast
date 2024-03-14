@@ -5,12 +5,14 @@
   "main": "index.js",
   "files": [
     "utils.js",
-    "legacy.js"
+    "legacy.js",
+    "index.d.ts"
   ],
   "exports": {
     ".": "./index.js",
     "./legacy": "./legacy.js"
   },
+  "types": "index.d.ts",
   "scripts": {
     "test": "for alias in '' sass-1.45 sass-1.36; do echo \"\\ntesting ${alias:-default}\\n\"; SASS_ALIAS=$alias npx mocha --require test/sass-mock.js; done",
     "document": "npx documentation readme index.js legacy.js --section Usage",
